@@ -41,17 +41,12 @@
               <configuration>
                   <container>
                       <containerId>tomcat11x</containerId>
-                      <type>remote</type>
+                      <type>installed</type>
+                      <home>C:\Software\apache-tomcat-11.0.10</home>
                   </container>
 
                   <configuration>
-                      <type>runtime</type>
-                      <properties>
-                          <cargo.remote.uri>http://localhost:8080/manager/text</cargo.remote.uri>
-                          <cargo.remote.username>admin</cargo.remote.username>
-                          <cargo.remote.password>admin</cargo.remote.password>
-                          <cargo.remote.deployer>org.codehaus.cargo.container.tomcat.internal.TomcatManagerDeployer</cargo.remote.deployer>
-                      </properties>
+                      <type>standalone</type>
                   </configuration>
 
                   <deployables>
