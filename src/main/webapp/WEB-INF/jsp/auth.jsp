@@ -53,6 +53,12 @@
                     </div>
                 </c:if>
 
+                <c:if test="${not empty requestScope.successRegistrationMessage}">
+                                    <div class="alert alert-success py-2 mb-3">
+                                        <span class="small">${requestScope.successRegistrationMessage}</span>
+                                    </div>
+                                </c:if>
+
                 <form action="Controller?command=do_auth" method="post">
                     <div class="mb-3">
                         <label for="login" class="form-label">Логин</label>

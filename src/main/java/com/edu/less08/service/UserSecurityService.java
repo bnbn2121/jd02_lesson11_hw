@@ -1,7 +1,9 @@
 package com.edu.less08.service;
 
-import com.edu.less08.model.User;
+import com.edu.less08.model.RegistrationInfo;
+import com.edu.less08.model.UserSession;
 
 public interface UserSecurityService {
-    User authenticate(String userLogin, String password) throws ServiceException;
+    UserSession authenticate(String userLogin, String password) throws ServiceException;
+    boolean registrate(RegistrationInfo registrationInfo) throws ServiceException;
 }

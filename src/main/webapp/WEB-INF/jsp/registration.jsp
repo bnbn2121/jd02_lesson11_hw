@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -48,7 +49,13 @@
         <div class="auth-container">
             <h2 class="text-center mb-4">Регистрация</h2>
 
-            <form action="RegisterServlet" method="post">
+            <c:if test="${not empty requestScope.errorMessage}">
+                                <div class="alert alert-danger py-2 mb-3">
+                                    <span class="small">${requestScope.errorMessage}</span>
+                                </div>
+                            </c:if>
+
+            <form action="Controller?command=DO_REGISTRATION" method="post">
                     <div class="mb-3">
                         <label for="login" class="form-label">Логин</label>
                         <div class="input-group">

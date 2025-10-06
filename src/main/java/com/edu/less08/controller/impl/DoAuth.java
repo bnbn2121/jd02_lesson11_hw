@@ -1,10 +1,10 @@
 package com.edu.less08.controller.impl;
 
 import com.edu.less08.controller.Command;
+import com.edu.less08.model.UserSession;
 import com.edu.less08.service.ServiceProvider;
 import com.edu.less08.service.UserSecurityService;
 import com.edu.less08.service.ServiceException;
-import com.edu.less08.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ public class DoAuth implements Command {
         String userPassword = request.getParameter("password");
         String rememberMe = request.getParameter("rememberMe");
         try {
-            User user = userSecurity.authenticate(userLogin, userPassword);
+            UserSession user = userSecurity.authenticate(userLogin, userPassword);
             request.getSession().setAttribute("user", user);
             request.getSession().setAttribute("rememberMe", rememberMe);
             if (rememberMe != null) {

@@ -19,6 +19,12 @@ public class GoToAuthPage implements Command {
                 request.setAttribute("errorMessage", errorMessage);
                 session.removeAttribute("errorMessage");
             }
+
+            String successMessage = (String) session.getAttribute("successRegistrationMessage");
+            if (successMessage != null) {
+                request.setAttribute("successRegistrationMessage", successMessage);
+                session.removeAttribute("successRegistrationMessage");
+            }
         }
         request.getRequestDispatcher("/WEB-INF/jsp/auth.jsp").forward(request, response);
     }
