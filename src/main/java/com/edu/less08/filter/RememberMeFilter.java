@@ -1,6 +1,6 @@
 package com.edu.less08.filter;
 
-import com.edu.less08.model.UserSession;
+import com.edu.less08.model.UserView;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebFilter;
@@ -25,7 +25,7 @@ public class RememberMeFilter extends HttpFilter {
                                 Cookie::getValue
                         ));
                 if (cookieMap.get("rememberMe") != null) {
-                    UserSession user = new UserSession(cookieMap.get("login"), cookieMap.get("email"));
+                    UserView user = new UserView(cookieMap.get("login"), cookieMap.get("email"));
                     req.getSession().setAttribute("user", user);
                 }
             }

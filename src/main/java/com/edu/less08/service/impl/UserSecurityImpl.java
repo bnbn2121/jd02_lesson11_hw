@@ -5,40 +5,39 @@ import com.edu.less08.dao.DaoProvider;
 import com.edu.less08.dao.UserDao;
 import com.edu.less08.model.RegistrationInfo;
 import com.edu.less08.model.User;
-import com.edu.less08.model.UserSession;
+import com.edu.less08.model.UserView;
 import com.edu.less08.service.ServiceException;
 import com.edu.less08.service.UserSecurityService;
-
-import java.util.*;
+import com.edu.less08.service.util.PasswordHasher;
 
 
 public class UserSecurityImpl implements UserSecurityService {
+    private final PasswordHasher passwordHasher = new PasswordHasher();
     private UserDao userDao = DaoProvider.getInstance().getUserDao();
-    private List<UserSession> registeredUsers = new ArrayList<>();
-    private Map<String, String> userPasswords = new HashMap<>();
 
-    {
-        registeredUsers.add(new UserSession("aaa", "aaa@mail.ru"));
-        registeredUsers.add(new UserSession("bbb", "bbb@mail.ru"));
-        registeredUsers.add(new UserSession("ccc", "ccc@mail.ru"));
-        registeredUsers.forEach(user -> userPasswords.put(user.getLogin(), user.getLogin()));
-    }
-
-    private Optional<UserSession> findUserByLogin(String inputLogin) {
-        return registeredUsers.stream()
-                .filter(user1 -> user1.getLogin().equals(inputLogin))
-                .findFirst();
-    }
 
     @Override
-    public UserSession authenticate(String userLogin, String password) throws ServiceException {
-        UserSession user = findUserByLogin(userLogin).orElseThrow(() -> new ServiceException().setUserMessage("Login not found"));
+    public UserView authenticate(String userLogin, String password) throws ServiceException {
+        User user = null;
+        try {
+            user = userDao.getUserByLogin(userLogin);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
 
-        if (userPasswords.get(userLogin).equals(password)) {
-            return user;
+        if (passwordHasher.checkPassword(password, user.getPassword())) {
+            UserView userView = getUserSession(user);
+            return userView;
         } else {
             throw new ServiceException().setUserMessage("Password is not correct");
         }
+    }
+
+    private UserView getUserSession(User user) {
+        String userLogin = user.getLogin();
+        String userEmail = user.getEmail();
+        UserView userView = new UserView(userLogin, userEmail);
+        return userView;
     }
 
     private void validate(RegistrationInfo registrationInfo) throws ServiceException {
@@ -55,7 +54,7 @@ public class UserSecurityImpl implements UserSecurityService {
             String password = registrationInfo.getPassword();
             String confirmPassword = registrationInfo.getConfirmPassword();
             if (!password.equals(confirmPassword)) {
-                throw new ServiceException().setUserMessage("Passwords don't match");
+                throw new ServiceException().setUserMessage("Passwords aren't match");
             }
         } catch (DaoException e) {
             throw new ServiceException(e);
@@ -70,7 +69,7 @@ public class UserSecurityImpl implements UserSecurityService {
                 0,
                 registrationInfo.getLogin(),
                 registrationInfo.getEmail(),
-                registrationInfo.getPassword(),
+                passwordHasher.hashPassword(registrationInfo.getPassword()),
                 1,
                 1
         );

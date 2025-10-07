@@ -3,11 +3,11 @@ package com.edu.less08.model;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class UserSession implements Serializable {
+public class UserView implements Serializable {
     private String login;
     private String email;
 
-    public UserSession(String login, String email) {
+    public UserView(String login, String email) {
         this.login = login;
         this.email = email;
     }
@@ -25,7 +25,7 @@ public class UserSession implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        UserSession user = (UserSession) o;
+        UserView user = (UserView) o;
         return Objects.equals(login, user.login) && Objects.equals(email, user.email);
     }
 
