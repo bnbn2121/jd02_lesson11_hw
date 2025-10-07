@@ -8,9 +8,9 @@ import java.sql.*;
 import java.util.List;
 
 public class DBUserDao implements UserDao {
-    String url = "jdbc:mysql://127.0.0.1/NewsAppDatabase?sslMode=DISABLED";
-    String daoUser = "root";
-    String daoPassword = "123";
+    private String url = "jdbc:mysql://127.0.0.1/news_app_database?sslMode=DISABLED&allowPublicKeyRetrieval=true";
+    private String daoUser = "root";
+    private String daoPassword = "123";
 
     static {
         try {
@@ -31,18 +31,22 @@ public class DBUserDao implements UserDao {
         try (Connection connection = DriverManager.getConnection(url, daoUser, daoPassword);
              PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);) {
             preparedStatement.setString(1, login);
-
+            System.out.println("login");
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 User user = null;
+                System.out.println(2);
                 if (resultSet.next()) {
+                    System.out.println("3");
                     user = new User(
                             resultSet.getInt(1),
                             resultSet.getString(2),
                             resultSet.getString(3),
                             resultSet.getString(4),
-                            resultSet.getInt(5)
+                            resultSet.getInt(5),
+                            resultSet.getInt(6)
                     );
                 }
+                System.out.println(4);
                 return user;
             }
         } catch (SQLException e) {
@@ -52,13 +56,14 @@ public class DBUserDao implements UserDao {
 
     @Override
     public User addUser(User user) throws DaoException {
-        String sqlQuery = "INSERT INTO users (login, email, password, role_id) VALUES (?, ?, ?, ?)";
+        String sqlQuery = "INSERT INTO users (login, email, password, role_id, status_id) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = DriverManager.getConnection(url, daoUser, daoPassword);
              PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);) {
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getEmail());
             preparedStatement.setString(3, user.getPassword());
             preparedStatement.setInt(4, user.getRoleId());
+            preparedStatement.setInt(5, user.getStatusId());
 
             int affectedRows = preparedStatement.executeUpdate();
 

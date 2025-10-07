@@ -53,9 +53,9 @@ public class UserSecurityImpl implements UserSecurityService {
             }
 
             String password = registrationInfo.getPassword();
-            String confirmPassord = registrationInfo.getConfirmPassword();
-            if (!password.equals(confirmPassord)) {
-                throw new ServiceException().setUserMessage("passwords don't match");
+            String confirmPassword = registrationInfo.getConfirmPassword();
+            if (!password.equals(confirmPassword)) {
+                throw new ServiceException().setUserMessage("Passwords don't match");
             }
         } catch (DaoException e) {
             throw new ServiceException(e);
@@ -71,8 +71,10 @@ public class UserSecurityImpl implements UserSecurityService {
                 registrationInfo.getLogin(),
                 registrationInfo.getEmail(),
                 registrationInfo.getPassword(),
+                1,
                 1
         );
+
             userDao.addUser(user);
             return true;
         } catch (DaoException e) {

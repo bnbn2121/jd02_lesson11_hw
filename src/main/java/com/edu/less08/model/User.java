@@ -8,13 +8,15 @@ public class User {
     private String email;
     private String password;
     private int roleId;
+    private int statusId;
 
-    public User(int id, String login, String email, String password, int roleId) {
+    public User(int id, String login, String email, String password, int roleId, int statusId) {
         this.id = id;
         this.login = login;
         this.email = email;
         this.password = password;
         this.roleId = roleId;
+        this.statusId = statusId;
     }
 
     public int getId() {
@@ -57,18 +59,26 @@ public class User {
         this.roleId = roleId;
     }
 
+    public int getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
         User user = (User) o;
-        return id == user.id && roleId == user.roleId && Objects.equals(login, user.login) && Objects.equals(email, user.email) && Objects.equals(password, user.password);
+        return id == user.id && roleId == user.roleId && statusId == user.statusId && Objects.equals(login, user.login) && Objects.equals(email, user.email) && Objects.equals(password, user.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, login, email, password, roleId);
+        return Objects.hash(id, login, email, password, roleId, statusId);
     }
 
     @Override
@@ -79,6 +89,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", roleId=" + roleId +
+                ", statusId=" + statusId +
                 '}';
     }
 }
