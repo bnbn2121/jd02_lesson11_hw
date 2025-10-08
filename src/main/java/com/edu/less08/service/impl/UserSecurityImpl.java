@@ -25,12 +25,16 @@ public class UserSecurityImpl implements UserSecurityService {
             throw new ServiceException(e);
         }
 
-        if (passwordHasher.checkPassword(password, user.getPassword())) {
-            UserView userView = getUserSession(user);
-            return userView;
-        } else {
+        if (user == null) {
+            throw new ServiceException().setUserMessage("Login is not exist");
+        }
+
+        if (!passwordHasher.checkPassword(password, user.getPassword())) {
             throw new ServiceException().setUserMessage("Password is not correct");
         }
+
+        UserView userView = getUserSession(user);
+        return userView;
     }
 
     private UserView getUserSession(User user) {

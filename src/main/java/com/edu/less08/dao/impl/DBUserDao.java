@@ -2,23 +2,14 @@ package com.edu.less08.dao.impl;
 
 import com.edu.less08.dao.DaoException;
 import com.edu.less08.dao.UserDao;
+import com.edu.less08.dao.pool.ConnectionManager;
 import com.edu.less08.model.User;
 
 import java.sql.*;
 import java.util.List;
 
 public class DBUserDao implements UserDao {
-    private String url = "jdbc:mysql://127.0.0.1/news_app_database?sslMode=DISABLED&allowPublicKeyRetrieval=true";
-    private String daoUser = "root";
-    private String daoPassword = "123";
-
-    static {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("MySQL JDBC Driver not found", e);
-        }
-    }
+    private final ConnectionManager connectionManager = new ConnectionManager();
 
     @Override
     public List<User> getAllUsers() throws DaoException {
@@ -28,25 +19,21 @@ public class DBUserDao implements UserDao {
     @Override
     public User getUserByLogin(String login) throws DaoException {
         String sqlQuery = "Select * from users where login = ?";
-        try (Connection connection = DriverManager.getConnection(url, daoUser, daoPassword);
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);) {
             preparedStatement.setString(1, login);
-            System.out.println("login");
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 User user = null;
-                System.out.println(2);
                 if (resultSet.next()) {
-                    System.out.println("3");
                     user = new User(
-                            resultSet.getInt(1),
-                            resultSet.getString(2),
-                            resultSet.getString(3),
-                            resultSet.getString(4),
-                            resultSet.getInt(5),
-                            resultSet.getInt(6)
+                            resultSet.getInt("id"),
+                            resultSet.getString("login"),
+                            resultSet.getString("email"),
+                            resultSet.getString("password"),
+                            resultSet.getInt("role_id"),
+                            resultSet.getInt("status_id")
                     );
                 }
-                System.out.println(4);
                 return user;
             }
         } catch (SQLException e) {
@@ -57,7 +44,7 @@ public class DBUserDao implements UserDao {
     @Override
     public User addUser(User user) throws DaoException {
         String sqlQuery = "INSERT INTO users (login, email, password, role_id, status_id) VALUES (?, ?, ?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection(url, daoUser, daoPassword);
+        try (Connection connection = connectionManager.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);) {
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getEmail());
@@ -67,7 +54,7 @@ public class DBUserDao implements UserDao {
 
             int affectedRows = preparedStatement.executeUpdate();
 
-            return null; //подумать нужно ли что-то возвращать
+            return null; //подумать нужно ли возвращать юзера
         } catch (SQLException e) {
             throw new DaoException(e);
         }
