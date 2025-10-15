@@ -3,6 +3,7 @@ package com.edu.less08.filter;
 import com.edu.less08.controller.CommandName;
 import com.edu.less08.controller.CommandProvider;
 import com.edu.less08.dao.DaoException;
+import com.edu.less08.dao.DaoProvider;
 import com.edu.less08.dao.impl.DBRoleDAO;
 import com.edu.less08.model.UserRole;
 import com.edu.less08.model.UserView;
@@ -21,7 +22,6 @@ import java.util.List;
 @WebFilter("/Controller")
 @Priority(3)
 public class AccessControlFilter extends HttpFilter {
-    private final DBRoleDAO roleDAO = new DBRoleDAO();
     private final List<CommandName> authorizedUserCommands;
     private final List<CommandName> moderatorCommands;
     private final List<CommandName> adminCommands;
@@ -54,19 +54,14 @@ public class AccessControlFilter extends HttpFilter {
         } else {
             redirectToMainPageWithErrorAccess(req, res);
         }
-
     }
 
-    private UserRole getRole(HttpSession session) throws ServletException {
+    private UserRole getRole(HttpSession session) {
         if (session == null || session.getAttribute("user") == null) {
             return UserRole.GUEST;
         } else {
-            int roleId = ((UserView)session.getAttribute("user")).getRoleId();
-            try {
-                return roleDAO.getRoleNameById(roleId);
-            } catch (DaoException e) {
-                throw new ServletException(e);
-            }
+            String roleName = ((UserView)session.getAttribute("user")).getRole();
+            return UserRole.valueOf(roleName);
         }
     }
 

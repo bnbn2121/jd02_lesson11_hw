@@ -6,12 +6,12 @@ import java.util.Objects;
 public class UserView implements Serializable {
     private String login;
     private String email;
-    private int roleId;
+    private String role;
 
-    public UserView(String login, String email, int roleId) {
+    public UserView(String login, String email, String role) {
         this.login = login;
         this.email = email;
-        this.roleId = roleId;
+        this.role = role;
     }
 
     public String getEmail() {
@@ -22,8 +22,8 @@ public class UserView implements Serializable {
         return login;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public String getRole() {
+        return role;
     }
 
     @Override
@@ -32,12 +32,12 @@ public class UserView implements Serializable {
             return false;
         }
         UserView userView = (UserView) o;
-        return roleId == userView.roleId && Objects.equals(login, userView.login) && Objects.equals(email, userView.email);
+        return Objects.equals(login, userView.login) && Objects.equals(email, userView.email) && Objects.equals(role, userView.role);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(login, email, roleId);
+        return Objects.hash(login, email, role);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class UserView implements Serializable {
         return "UserView{" +
                 "login='" + login + '\'' +
                 ", email='" + email + '\'' +
-                ", roleId=" + roleId +
+                ", role='" + role + '\'' +
                 '}';
     }
 }

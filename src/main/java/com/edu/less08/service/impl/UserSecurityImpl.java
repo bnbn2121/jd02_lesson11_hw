@@ -3,6 +3,7 @@ package com.edu.less08.service.impl;
 import com.edu.less08.dao.DaoException;
 import com.edu.less08.dao.DaoProvider;
 import com.edu.less08.dao.UserDao;
+import com.edu.less08.dao.impl.DBRoleDAO;
 import com.edu.less08.model.RegistrationInfo;
 import com.edu.less08.model.User;
 import com.edu.less08.model.UserView;
@@ -13,7 +14,8 @@ import com.edu.less08.service.util.PasswordHasher;
 
 public class UserSecurityImpl implements UserSecurityService {
     private final PasswordHasher passwordHasher = new PasswordHasher();
-    private UserDao userDao = DaoProvider.getInstance().getUserDao();
+    private final UserDao userDao = DaoProvider.getInstance().getUserDao();
+    private final DBRoleDAO roleDAO = DaoProvider.getInstance().getRoleDao();
 
 
     @Override
@@ -37,12 +39,17 @@ public class UserSecurityImpl implements UserSecurityService {
         return userView;
     }
 
-    private UserView getUserView(User user) {
-        String userLogin = user.getLogin();
-        String userEmail = user.getEmail();
-        int userRoleId = user.getRoleId();
-        UserView userView = new UserView(userLogin, userEmail, userRoleId);
-        return userView;
+    private UserView getUserView(User user) throws ServiceException{
+        try {
+            String userLogin = user.getLogin();
+            String userEmail = user.getEmail();
+            int userRoleId = user.getRoleId();
+            String userRole = roleDAO.getRoleNameById(userRoleId).name();
+            UserView userView = new UserView(userLogin, userEmail, userRole);
+            return userView;
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
     }
 
     private void validate(RegistrationInfo registrationInfo) throws ServiceException {
