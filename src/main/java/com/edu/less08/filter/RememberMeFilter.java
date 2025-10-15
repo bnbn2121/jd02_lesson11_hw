@@ -1,6 +1,7 @@
 package com.edu.less08.filter;
 
 import com.edu.less08.model.UserView;
+import jakarta.annotation.Priority;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebFilter;
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @WebFilter("/Controller")
+@Priority(2)
 public class RememberMeFilter extends HttpFilter {
     @Override
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {

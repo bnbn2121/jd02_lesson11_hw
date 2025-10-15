@@ -6,6 +6,7 @@ import com.edu.less08.dao.DaoException;
 import com.edu.less08.dao.impl.DBRoleDAO;
 import com.edu.less08.model.UserRole;
 import com.edu.less08.model.UserView;
+import jakarta.annotation.Priority;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpFilter;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @WebFilter("/Controller")
+@Priority(3)
 public class AccessControlFilter extends HttpFilter {
     private final DBRoleDAO roleDAO = new DBRoleDAO();
     private final List<CommandName> authorizedUserCommands;
