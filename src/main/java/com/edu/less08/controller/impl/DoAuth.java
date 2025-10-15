@@ -16,7 +16,7 @@ public class DoAuth implements Command {
     private final UserSecurityService userSecurity = ServiceProvider.getInstance().getUserSecurityService();
 
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String userLogin = request.getParameter("login");
         String userPassword = request.getParameter("password");
         String rememberMe = request.getParameter("rememberMe");
@@ -28,6 +28,7 @@ public class DoAuth implements Command {
                 addCookieWithTimeLife("rememberMe", rememberMe, 14, response);
                 addCookieWithTimeLife("login", user.getLogin(), 14, response);
                 addCookieWithTimeLife("email", user.getEmail(), 14, response);
+                addCookieWithTimeLife("roleId", String.valueOf(user.getRoleId()), 14, response);
             }
             response.sendRedirect("Controller?command=go_to_main_page");
         } catch (ServiceException e) {

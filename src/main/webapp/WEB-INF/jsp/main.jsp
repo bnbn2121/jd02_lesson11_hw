@@ -38,6 +38,39 @@
             left: 50%;
             transform: translateX(-50%);
         }
+
+        /* Стили для всплывающего уведомления */
+        .alert-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            min-width: 400px;
+            max-width: 90%;
+            animation: toastAnimation 4s ease-in-out forwards;
+        }
+
+        @keyframes toastAnimation {
+            0% {
+                transform: translateX(-50%) translateY(-100%);
+                opacity: 0;
+            }
+            15% {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+            85% {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-50%) translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
         @media (max-width: 991px) {
             .navbar-brand-center {
                 position: static;
@@ -45,10 +78,28 @@
                 text-align: center;
                 margin: 0 auto;
             }
+            .alert-toast {
+                min-width: 90%;
+                max-width: 90%;
+            }
         }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
+    <!-- Блок для отображения уведомлений -->
+    <c:if test="${not empty sessionScope.errorMessage}">
+        <div class="alert alert-danger alert-toast alert-dismissible fade show" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <div class="flex-grow-1">
+                    <strong>Ошибка!</strong> ${sessionScope.errorMessage}
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+        <c:remove var="errorMessage" scope="session"/>
+    </c:if>
+
     <jsp:include page="header.jsp"/>
 
     <jsp:include page="content.jsp"/>

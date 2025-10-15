@@ -66,14 +66,16 @@ public class DB_creator {
                 "CREATE TABLE `roles` (\n" +
                         "  `id` int NOT NULL AUTO_INCREMENT,\n" +
                         "  `type` varchar(100) NOT NULL,\n" +
-                        "  PRIMARY KEY (`id`)\n" +
+                        "  PRIMARY KEY (`id`),\n" +
+                        "  UNIQUE KEY `roles_unique` (`type`)\n" +
                         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;"
         );
         executeQuery(
                 "CREATE TABLE `status` (\n" +
                         "  `id` int NOT NULL AUTO_INCREMENT,\n" +
                         "  `status` varchar(100) NOT NULL,\n" +
-                        "  PRIMARY KEY (`id`)\n" +
+                        "  PRIMARY KEY (`id`),\n" +
+                        "  UNIQUE KEY `status_uk` (`status`)\n" +
                         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;"
         );
         executeQuery(

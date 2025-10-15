@@ -11,4 +11,5 @@ public interface UserDao {
     void removeUserByLogin(String login) throws DaoException;
     User updateUser(User user) throws DaoException;
     int findIndexNewsByLogin(String login) throws DaoException;
+    int getRoleIdByName(String role) throws DaoException;
 }

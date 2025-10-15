@@ -10,15 +10,14 @@ import java.io.IOException;
 
 @WebServlet("/Controller")
 public class Controller extends HttpServlet {
-    CommandProvider commandProvider = new CommandProvider();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        commandProvider.getCommand(request.getParameter("command")).execute(request, response);
+        CommandProvider.getCommand(request.getParameter("command")).execute(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        commandProvider.getCommand(request.getParameter("command")).execute(request, response);
+        CommandProvider.getCommand(request.getParameter("command")).execute(request, response);
     }
 }

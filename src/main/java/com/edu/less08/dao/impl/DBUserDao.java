@@ -74,4 +74,21 @@ public class DBUserDao implements UserDao {
     public int findIndexNewsByLogin(String login) throws DaoException {
         return 0;
     }
+
+    public int getRoleIdByName(String role) throws DaoException {
+        String sqlQuery = "Select id from roles where type = ?";
+        try (Connection connection = connectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);) {
+            preparedStatement.setString(1, role);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                int roleId = 0;
+                if (resultSet.next()) {
+                    roleId = resultSet.getInt(1);
+                }
+                return roleId;
+            }
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
 }

@@ -33,14 +33,15 @@ public class UserSecurityImpl implements UserSecurityService {
             throw new ServiceException().setUserMessage("Password is not correct");
         }
 
-        UserView userView = getUserSession(user);
+        UserView userView = getUserView(user);
         return userView;
     }
 
-    private UserView getUserSession(User user) {
+    private UserView getUserView(User user) {
         String userLogin = user.getLogin();
         String userEmail = user.getEmail();
-        UserView userView = new UserView(userLogin, userEmail);
+        int userRoleId = user.getRoleId();
+        UserView userView = new UserView(userLogin, userEmail, userRoleId);
         return userView;
     }
 
@@ -74,7 +75,7 @@ public class UserSecurityImpl implements UserSecurityService {
                 registrationInfo.getLogin(),
                 registrationInfo.getEmail(),
                 passwordHasher.hashPassword(registrationInfo.getPassword()),
-                1,
+                userDao.getRoleIdByName("user"), //создать roleDao
                 1
         );
 
