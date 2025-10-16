@@ -1,6 +1,8 @@
 package com.edu.less08.model;
 
-public class RegistrationInfo {
+import java.io.Serializable;
+
+public class RegistrationInfo implements Serializable {
     private final String login;
     private final String email;
     private final String password;

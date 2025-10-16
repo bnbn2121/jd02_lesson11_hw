@@ -13,6 +13,11 @@ public class NewsServiceImpl implements NewsService {
     private final NewsDao newsDao = DaoProvider.getInstance().getNewsDao();
 
     @Override
+    public News createNews(String title, String brief, String content, String pathImage) throws ServiceException {
+        return null;
+    }
+
+    @Override
     public List<News> getNews(int indexFirst, int countNews) throws ServiceException {
         try {
             return newsDao.getNews(indexFirst, countNews);

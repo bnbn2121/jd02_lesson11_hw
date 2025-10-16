@@ -1,6 +1,7 @@
 package com.edu.less08.dao.impl;
 
 import com.edu.less08.dao.DaoException;
+import com.edu.less08.dao.RoleDao;
 import com.edu.less08.dao.pool.ConnectionManager;
 import com.edu.less08.model.UserRole;
 
@@ -9,9 +10,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DBRoleDAO {
+public class RoleDaoDB implements RoleDao {
     private final ConnectionManager connectionManager = new ConnectionManager();
 
+    @Override
     public int getRoleIdByName(UserRole userRole) throws DaoException {
         String sqlQuery = "Select id from roles where type = ?";
         try (Connection connection = connectionManager.getConnection();
@@ -28,6 +30,7 @@ public class DBRoleDAO {
         }
     }
 
+    @Override
     public UserRole getRoleNameById(int roleId) throws DaoException {
         String sqlQuery = "Select type from roles where id = ?";
         try (Connection connection = connectionManager.getConnection();

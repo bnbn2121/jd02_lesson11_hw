@@ -6,9 +6,9 @@ import java.sql.SQLException;
 public class ConnectionManager {
     private static ConnectionPoolCustom connectionPool;
 
-    public static void initConnectionPool(String url, String User, String Password, int maxPoolSize) throws SQLException {
+    public static void initConnectionPool(String url, String user, String password, int maxPoolSize) throws SQLException {
         if (connectionPool == null) {
-            connectionPool = new ConnectionPoolCustom(url, User, Password, maxPoolSize);
+            connectionPool = new ConnectionPoolCustom(url, user, password, maxPoolSize);
         }
     }
 

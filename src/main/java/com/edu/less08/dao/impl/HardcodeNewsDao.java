@@ -7,6 +7,7 @@ import com.edu.less08.model.News;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class HardcodeNewsDao implements NewsDao {
@@ -67,22 +68,23 @@ public class HardcodeNewsDao implements NewsDao {
     }
 
     @Override
-    public News getNewsById(int idNews) throws DaoException {
+    public Optional<News> getNewsById(int idNews) throws DaoException {
         return null;
     }
 
     @Override
-    public void addNews(News news) throws DaoException {
+    public News addNews(News news) throws DaoException {
+
+        return news;
+    }
+
+    @Override
+    public void deleteNewsById(int idNews) throws DaoException {
 
     }
 
     @Override
-    public void removeNewsById(int idNews) throws DaoException {
-
-    }
-
-    @Override
-    public News updateNews(News news) throws DaoException {
+    public void updateNews(News news) throws DaoException {
         return null;
     }
 

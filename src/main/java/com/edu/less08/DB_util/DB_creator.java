@@ -89,6 +89,8 @@ public class DB_creator {
                         "  PRIMARY KEY (`id`),\n" +
                         "  KEY `users_role_FK` (`role_id`),\n" +
                         "  KEY `users_status_FK` (`status_id`),\n" +
+                        "  UNIQUE KEY `login_unique` (`login`)\n" +
+                        "  UNIQUE KEY `email_unique` (`email`)\n" +
                         "  CONSTRAINT `users_role_FK` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`),\n" +
                         "  CONSTRAINT `users_status_FK` FOREIGN KEY (`status_id`) REFERENCES `status` (`id`)\n" +
                         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;\n"

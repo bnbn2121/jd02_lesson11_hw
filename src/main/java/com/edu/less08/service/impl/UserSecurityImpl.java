@@ -2,10 +2,11 @@ package com.edu.less08.service.impl;
 
 import com.edu.less08.dao.DaoException;
 import com.edu.less08.dao.DaoProvider;
+import com.edu.less08.dao.RoleDao;
 import com.edu.less08.dao.UserDao;
-import com.edu.less08.dao.impl.DBRoleDAO;
 import com.edu.less08.model.RegistrationInfo;
 import com.edu.less08.model.User;
+import com.edu.less08.model.UserRole;
 import com.edu.less08.model.UserView;
 import com.edu.less08.service.ServiceException;
 import com.edu.less08.service.UserSecurityService;
@@ -15,7 +16,7 @@ import com.edu.less08.service.util.PasswordHasher;
 public class UserSecurityImpl implements UserSecurityService {
     private final PasswordHasher passwordHasher = new PasswordHasher();
     private final UserDao userDao = DaoProvider.getInstance().getUserDao();
-    private final DBRoleDAO roleDAO = DaoProvider.getInstance().getRoleDao();
+    private final RoleDao roleDAO = DaoProvider.getInstance().getRoleDao();
 
 
     @Override
@@ -82,7 +83,7 @@ public class UserSecurityImpl implements UserSecurityService {
                 registrationInfo.getLogin(),
                 registrationInfo.getEmail(),
                 passwordHasher.hashPassword(registrationInfo.getPassword()),
-                userDao.getRoleIdByName("user"), //создать roleDao
+                roleDAO.getRoleIdByName(UserRole.USER),
                 1
         );
 
