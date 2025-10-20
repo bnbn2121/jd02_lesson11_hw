@@ -7,6 +7,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface NewsService {
-    News createNews(String title, String brief, String content, String pathImage) throws ServiceException;
     List<News> getNews(int indexFirst, int countNews) throws ServiceException;
+    News addNews(String title, String brief, String content, String imagePath) throws ServiceException;
 }

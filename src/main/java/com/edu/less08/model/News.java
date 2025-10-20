@@ -81,7 +81,7 @@ public class News implements Serializable {
         public News build() {
             News news = new News(this);
             clearBuilder();
-            return new News(this);
+            return news;
         }
 
         public void clearBuilder() {

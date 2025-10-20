@@ -12,6 +12,36 @@ import java.util.stream.Collectors;
 
 public class HardcodeNewsDao implements NewsDao {
     @Override
+    public List<News> getNewsPaginated(int offset, int limit) throws DaoException {
+        return List.of();
+    }
+
+    @Override
+    public List<News> getAllNews() throws DaoException {
+        return List.of();
+    }
+
+    @Override
+    public Optional<News> getNewsById(int idNews) throws DaoException {
+        return Optional.empty();
+    }
+
+    @Override
+    public News addNews(News news) throws DaoException {
+        return null;
+    }
+
+    @Override
+    public void deleteNewsById(int idNews) throws DaoException {
+
+    }
+
+    @Override
+    public void updateNews(News news) throws DaoException {
+
+    }
+    /*
+    @Override
     public List<News> getNews(int indexFirst, int countNews) throws DaoException {
         List<News> allNews = getAllNews();
         if (indexFirst < 0 || indexFirst >= allNews.size()) {
@@ -92,4 +122,5 @@ public class HardcodeNewsDao implements NewsDao {
     public int findIndexNewsById(int idNews) throws DaoException {
         return 0;
     }
+     */
 }

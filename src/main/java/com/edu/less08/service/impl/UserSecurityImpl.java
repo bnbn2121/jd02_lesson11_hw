@@ -12,6 +12,8 @@ import com.edu.less08.service.ServiceException;
 import com.edu.less08.service.UserSecurityService;
 import com.edu.less08.service.util.PasswordHasher;
 
+import java.util.Optional;
+
 
 public class UserSecurityImpl implements UserSecurityService {
     private final PasswordHasher passwordHasher = new PasswordHasher();
@@ -21,23 +23,20 @@ public class UserSecurityImpl implements UserSecurityService {
 
     @Override
     public UserView authenticate(String userLogin, String password) throws ServiceException {
-        User user = null;
         try {
-            user = userDao.getUserByLogin(userLogin);
+            Optional<User> userOptional = userDao.getUserByLogin(userLogin);
+            if (userOptional.isEmpty()) {
+                throw new ServiceException().setUserMessage("Login is not exist");
+            }
+            User user = userOptional.get();
+            if (!passwordHasher.checkPassword(password, user.getPassword())) {
+                throw new ServiceException().setUserMessage("Password is not correct");
+            }
+            UserView userView = getUserView(user);
+            return userView;
         } catch (DaoException e) {
             throw new ServiceException(e);
         }
-
-        if (user == null) {
-            throw new ServiceException().setUserMessage("Login is not exist");
-        }
-
-        if (!passwordHasher.checkPassword(password, user.getPassword())) {
-            throw new ServiceException().setUserMessage("Password is not correct");
-        }
-
-        UserView userView = getUserView(user);
-        return userView;
     }
 
     private UserView getUserView(User user) throws ServiceException{
