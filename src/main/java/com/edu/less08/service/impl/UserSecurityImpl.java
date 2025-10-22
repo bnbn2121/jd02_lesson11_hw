@@ -1,13 +1,7 @@
 package com.edu.less08.service.impl;
 
-import com.edu.less08.dao.DaoException;
-import com.edu.less08.dao.DaoProvider;
-import com.edu.less08.dao.RoleDao;
-import com.edu.less08.dao.UserDao;
-import com.edu.less08.model.RegistrationInfo;
-import com.edu.less08.model.User;
-import com.edu.less08.model.UserRole;
-import com.edu.less08.model.UserView;
+import com.edu.less08.dao.*;
+import com.edu.less08.model.*;
 import com.edu.less08.service.ServiceException;
 import com.edu.less08.service.UserSecurityService;
 import com.edu.less08.service.util.PasswordHasher;
@@ -18,7 +12,19 @@ import java.util.Optional;
 public class UserSecurityImpl implements UserSecurityService {
     private final PasswordHasher passwordHasher = new PasswordHasher();
     private final UserDao userDao = DaoProvider.getInstance().getUserDao();
-    private final RoleDao roleDAO = DaoProvider.getInstance().getRoleDao();
+    private final RoleDao roleDao = DaoProvider.getInstance().getRoleDao();
+    private final StatusDao statusDao = DaoProvider.getInstance().getStatusDao();
+    private final int defaultUserRoleId;
+    private final int defaultUserStatusId;
+
+    {
+        try {
+            defaultUserRoleId = roleDao.getRoleIdByName(UserRole.USER);
+            defaultUserStatusId = statusDao.getStatusIdByName(Status.ACTIVE);
+        } catch (DaoException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
     @Override
@@ -44,7 +50,7 @@ public class UserSecurityImpl implements UserSecurityService {
             String userLogin = user.getLogin();
             String userEmail = user.getEmail();
             int userRoleId = user.getRoleId();
-            String userRole = roleDAO.getRoleNameById(userRoleId).name();
+            String userRole = roleDao.getRoleNameById(userRoleId).name();
             UserView userView = new UserView(userLogin, userEmail, userRole);
             return userView;
         } catch (DaoException e) {
@@ -82,8 +88,8 @@ public class UserSecurityImpl implements UserSecurityService {
                 registrationInfo.getLogin(),
                 registrationInfo.getEmail(),
                 passwordHasher.hashPassword(registrationInfo.getPassword()),
-                roleDAO.getRoleIdByName(UserRole.USER),
-                1
+                roleDao.getRoleIdByName(UserRole.USER),
+                statusDao.getStatusIdByName(Status.ACTIVE)
         );
 
             userDao.addUser(user);

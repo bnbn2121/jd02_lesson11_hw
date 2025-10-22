@@ -3,6 +3,7 @@ package com.edu.less08.dao.impl;
 import com.edu.less08.dao.DaoException;
 import com.edu.less08.dao.NewsDao;
 import com.edu.less08.model.News;
+import com.edu.less08.model.Status;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,6 +40,11 @@ public class HardcodeNewsDao implements NewsDao {
     @Override
     public void updateNews(News news) throws DaoException {
 
+    }
+
+    @Override
+    public int getAllNewsCount(Status... status) throws DaoException {
+        return 0;
     }
     /*
     @Override

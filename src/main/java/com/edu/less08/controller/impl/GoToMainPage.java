@@ -14,16 +14,60 @@ import java.util.List;
 
 public class GoToMainPage implements Command {
     private final NewsService newsService = ServiceProvider.getInstance().getNewsService();
+    private int newsPerPage = 3;
+    private int totalPages;
+    private int currentPage;
+    private int prevPage;
+    private int nextPage;
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<News> listNews = null;
         try {
-            listNews = newsService.getNews(0, 3);
+            getCurrentPage(request);
+            calcTotalPages(request, response);
+            List<News> listNews = loadListNews();
+            setPaginationLinks();
+
             request.setAttribute("listNews", listNews);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("prevPage", prevPage);
+            request.setAttribute("nextPage", nextPage);
             request.getRequestDispatcher("/WEB-INF/jsp/main.jsp").forward(request, response);
         } catch (ServiceException e) {
-            e.printStackTrace();
+            //обработать нормально
+        }
+    }
+
+    private void getCurrentPage(HttpServletRequest request){
+        String viewPageParameter = request.getParameter("viewPage");
+        if (viewPageParameter==null) {
+            currentPage = 1;
+        } else {
+            currentPage = Integer.parseInt(viewPageParameter);
+        }
+    }
+
+    private void calcTotalPages(HttpServletRequest request, HttpServletResponse response) throws ServiceException, ServletException, IOException {
+        int totalActiveNews = newsService.getAllActiveNewsCount();
+        if (totalActiveNews == 0) {
+            request.getRequestDispatcher("/WEB-INF/jsp/main.jsp").forward(request, response);
+        }
+        totalPages = (int) Math.ceil(1.0 * totalActiveNews / newsPerPage);
+    }
+
+    private List<News> loadListNews() throws ServiceException {
+        int indexFirstNewsForLoad = (currentPage - 1) * newsPerPage;
+        return newsService.getNews(indexFirstNewsForLoad, newsPerPage);
+    }
+
+    private void setPaginationLinks() {
+        prevPage = currentPage - 1;
+        nextPage = currentPage + 1;
+        if (prevPage == 0) {
+            prevPage = 1;
+        }
+        if (nextPage > totalPages) {
+            nextPage = totalPages;
         }
     }
 }

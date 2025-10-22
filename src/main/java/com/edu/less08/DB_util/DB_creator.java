@@ -73,9 +73,9 @@ public class DB_creator {
         executeQuery(
                 "CREATE TABLE `status` (\n" +
                         "  `id` int NOT NULL AUTO_INCREMENT,\n" +
-                        "  `status` varchar(100) NOT NULL,\n" +
+                        "  `type` varchar(100) NOT NULL,\n" +
                         "  PRIMARY KEY (`id`),\n" +
-                        "  UNIQUE KEY `status_uk` (`status`)\n" +
+                        "  UNIQUE KEY `status_uk` (`type`)\n" +
                         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;"
         );
         executeQuery(
@@ -123,9 +123,9 @@ public class DB_creator {
                 "CREATE TABLE `news` (\n" +
                         "  `id` int NOT NULL AUTO_INCREMENT,\n" +
                         "  `title` varchar(100) NOT NULL,\n" +
-                        "  `brief` varchar(200) DEFAULT NULL,\n" +
+                        "  `brief` varchar(300) DEFAULT NULL,\n" +
                         "  `content_path` varchar(100) NOT NULL,\n" +
-                        "  `image_path` varchar(100) DEFAULT NULL,\n" +
+                        "  `image_path` varchar(200) DEFAULT NULL,\n" +
                         "  `publish_date` date NOT NULL,\n" +
                         "  `publisher_id` int NOT NULL,\n" +
                         "  `status_id` int NOT NULL,\n" +
@@ -203,8 +203,9 @@ public class DB_creator {
                         "('superadmin');"
         );
         executeQuery(
-                "INSERT INTO `status` (`status`) VALUES \n" +
+                "INSERT INTO `status` (`type`) VALUES \n" +
                         "('active'),\n" +
+                        "('awaiting'),\n" +
                         "('closed');"
         );
     }

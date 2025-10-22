@@ -4,10 +4,11 @@ import com.edu.less08.dao.impl.*;
 
 public class DaoProvider {
     private static final DaoProvider instance = new DaoProvider();
-    private final UserDao userDao = new UserDaoDB();
-    private final NewsDao newsDao = new NewsDaoDB();
-    private final RoleDao roleDao = new RoleDaoDB();
-    private final NewsContextStorageDao newsContextStorageDao = new NewsContextStorageDaoFile();
+    private UserDao userDao;
+    private NewsDao newsDao;
+    private RoleDao roleDao;
+    private StatusDao statusDao;
+    private NewsContextStorageDao newsContextStorageDao;
 
 
     private DaoProvider(){}
@@ -17,18 +18,37 @@ public class DaoProvider {
     }
 
     public UserDao getUserDao() {
+        if (userDao == null) {
+            userDao = new UserDaoDB();
+        }
         return userDao;
     }
 
     public NewsDao getNewsDao() {
+        if (newsDao == null) {
+            newsDao = new NewsDaoDB();
+        }
         return newsDao;
     }
 
     public RoleDao getRoleDao() {
+        if (roleDao == null) {
+            roleDao = new RoleDaoDB();
+        }
         return roleDao;
     }
 
+    public StatusDao getStatusDao() {
+        if (statusDao == null) {
+            statusDao = new StatusDaoDB();
+        }
+        return statusDao;
+    }
+
     public NewsContextStorageDao getNewsContextStorageDao() {
+        if (newsContextStorageDao == null) {
+            newsContextStorageDao = new NewsContextStorageDaoFile();
+        }
         return newsContextStorageDao;
     }
 }

@@ -1,9 +1,12 @@
 package com.edu.less08.dao.impl;
 
 import com.edu.less08.dao.DaoException;
+import com.edu.less08.dao.DaoProvider;
 import com.edu.less08.dao.NewsDao;
+import com.edu.less08.dao.StatusDao;
 import com.edu.less08.dao.pool.ConnectionManager;
 import com.edu.less08.model.News;
+import com.edu.less08.model.Status;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -14,19 +17,23 @@ import java.util.Optional;
 public class NewsDaoDB implements NewsDao {
     private final ConnectionManager connectionManager = new ConnectionManager();
     private News.NewsBuilder newsBuilder = new News.NewsBuilder();
-    private static final String SELECT_NEWS_PAGINATED = "SELECT * FROM news ORDER BY publish_date DESC LIMIT ? OFFSET ?";
+    private StatusDao statusDao = DaoProvider.getInstance().getStatusDao();
+    private static final String SELECT_NEWS_PAGINATED_ACTIVE = "SELECT * FROM news WHERE status_id = ? ORDER BY publish_date DESC, id DESC LIMIT ? OFFSET ?";
     private static final String SELECT_NEWS_BY_ID = "SELECT * FROM news WHERE id=?";
     private static final String INSERT_NEWS = "INSERT INTO news (title, brief, content_path, image_path, publish_date, publisher_id, status_id)" +
             "VALUES (?, ?, ?, ?, ?, ?, ?);";
     private static final String DELETE_NEWS_BY_ID = "DELETE FROM news WHERE id = ?";
     private static final String UPDATE_NEWS = "UPDATE news SET title = ?, brief = ?, content_path = ?, image_path = ?, publisher_id = ?, status_id = ? WHERE id = ?";
+    private static final String SELECT_COUNT_ALL_NEWS = "SELECT COUNT(*) FROM news WHERE status_id = ?";
 
     @Override
     public List<News> getNewsPaginated(int offset, int limit) throws DaoException {
         try (Connection connection = connectionManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_NEWS_PAGINATED)){
-            preparedStatement.setInt(1, limit);
-            preparedStatement.setInt(2, offset);
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_NEWS_PAGINATED_ACTIVE)){
+            int statusId = statusDao.getStatusIdByName(Status.ACTIVE);
+            preparedStatement.setInt(1, statusId);
+            preparedStatement.setInt(2, limit);
+            preparedStatement.setInt(3, offset);
             List<News> newsList = executeQueryAndCreateListNews(preparedStatement);
             return newsList;
         } catch (SQLException e) {
@@ -92,7 +99,7 @@ public class NewsDaoDB implements NewsDao {
             preparedStatement.setString(2, news.getBrief());
             preparedStatement.setString(3, news.getContentPath());
             preparedStatement.setString(4, news.getImagePath());
-            preparedStatement.setDate(5, Date.valueOf(LocalDate.now()));
+            preparedStatement.setDate(5, Date.valueOf(news.getPublishDate()));
             preparedStatement.setInt(6, news.getPublisherId());
             preparedStatement.setInt(7, news.getStatusId());
             preparedStatement.executeUpdate();
@@ -139,6 +146,25 @@ public class NewsDaoDB implements NewsDao {
             preparedStatement.setInt(6, news.getStatusId());
             preparedStatement.setInt(7, news.getId());
             preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    public int getAllNewsCount(Status ... status) throws DaoException {
+        try (Connection connection = connectionManager.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_COUNT_ALL_NEWS)) {
+            int countNews = 0;
+            for (Status oneStatus : status) {
+                int statusId = statusDao.getStatusIdByName(oneStatus);
+                preparedStatement.setInt(1, statusId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if(resultSet.next()) {
+                    countNews += resultSet.getInt(1);
+                }
+            }
+            return countNews;
         } catch (SQLException e) {
             throw new DaoException(e);
         }

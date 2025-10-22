@@ -1,6 +1,7 @@
 package com.edu.less08.dao;
 
 import com.edu.less08.model.News;
+import com.edu.less08.model.Status;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,4 +13,5 @@ public interface NewsDao {
     News addNews(News news) throws DaoException;
     void deleteNewsById(int idNews) throws DaoException;
     void updateNews(News news) throws DaoException;
+    int getAllNewsCount(Status... status) throws DaoException;
 }
