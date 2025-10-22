@@ -25,14 +25,17 @@ public class GoToMainPage implements Command {
         try {
             getCurrentPage(request);
             calcTotalPages(request, response);
-            List<News> listNews = loadListNews();
-            setPaginationLinks();
 
-            request.setAttribute("listNews", listNews);
-            request.setAttribute("totalPages", totalPages);
-            request.setAttribute("prevPage", prevPage);
-            request.setAttribute("nextPage", nextPage);
-            request.getRequestDispatcher("/WEB-INF/jsp/main.jsp").forward(request, response);
+            if (totalPages > 0) {
+                List<News> listNews = loadListNews();
+                setPaginationLinks();
+
+                request.setAttribute("listNews", listNews);
+                request.setAttribute("totalPages", totalPages);
+                request.setAttribute("prevPage", prevPage);
+                request.setAttribute("nextPage", nextPage);
+                request.getRequestDispatcher("/WEB-INF/jsp/main.jsp").forward(request, response);
+            }
         } catch (ServiceException e) {
             //обработать нормально
         }
@@ -50,7 +53,9 @@ public class GoToMainPage implements Command {
     private void calcTotalPages(HttpServletRequest request, HttpServletResponse response) throws ServiceException, ServletException, IOException {
         int totalActiveNews = newsService.getAllActiveNewsCount();
         if (totalActiveNews == 0) {
+            totalPages = 0;
             request.getRequestDispatcher("/WEB-INF/jsp/main.jsp").forward(request, response);
+            return;
         }
         totalPages = (int) Math.ceil(1.0 * totalActiveNews / newsPerPage);
     }
