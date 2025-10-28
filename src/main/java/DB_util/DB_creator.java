@@ -1,4 +1,4 @@
-package com.edu.less08.DB_util;
+package DB_util;
 
 import java.sql.*;
 

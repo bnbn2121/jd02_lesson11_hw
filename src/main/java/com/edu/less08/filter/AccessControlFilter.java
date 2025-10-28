@@ -30,6 +30,7 @@ public class AccessControlFilter extends HttpFilter {
         authorizedUserCommands.add(CommandName.REMOVE_COMMENT);
         authorizedUserCommands.add(CommandName.ADD_NEWS);
         authorizedUserCommands.add(CommandName.ADD_COMPLAINT);
+        authorizedUserCommands.add(CommandName.GO_TO_NEWS_REDACTOR_PAGE);
 
         moderatorCommands = new ArrayList<>();
         moderatorCommands.add(CommandName.APPROVE_NEWS);

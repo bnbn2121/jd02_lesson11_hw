@@ -2,7 +2,7 @@ package com.edu.less08.dao.impl;
 
 import com.edu.less08.dao.DaoException;
 import com.edu.less08.dao.UserDao;
-import com.edu.less08.dao.pool.ConnectionManager;
+import com.edu.less08.dao.pool.ConnectionPoolCustom;
 import com.edu.less08.model.User;
 
 import java.sql.*;
@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserDaoDB implements UserDao {
-    private final ConnectionManager connectionManager = new ConnectionManager();
     private final static String SELECT_USER_BY_LOGIN = "SELECT * FROM users WHERE login = ?";
     private final static String SELECT_USER_BY_ID = "SELECT * FROM users WHERE id = ?";
     private final static String INSERT_USER = "INSERT INTO users (login, email, password, role_id, status_id) VALUES (?, ?, ?, ?, ?)";
@@ -24,7 +23,7 @@ public class UserDaoDB implements UserDao {
 
     @Override
     public Optional<User> getUserById(int id) throws DaoException {
-        try (Connection connection = connectionManager.getConnection();
+        try (Connection connection = ConnectionPoolCustom.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID)) {
             preparedStatement.setInt(1, id);
             return executeQueryAndCreateOptionalUser(preparedStatement);
@@ -35,7 +34,7 @@ public class UserDaoDB implements UserDao {
 
     @Override
     public Optional<User> getUserByLogin(String login) throws DaoException {
-        try (Connection connection = connectionManager.getConnection();
+        try (Connection connection = ConnectionPoolCustom.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_LOGIN)) {
             preparedStatement.setString(1, login);
             return executeQueryAndCreateOptionalUser(preparedStatement);
@@ -65,7 +64,7 @@ public class UserDaoDB implements UserDao {
 
     @Override
     public User addUser(User user) throws DaoException {
-        try (Connection connection = connectionManager.getConnection();
+        try (Connection connection = ConnectionPoolCustom.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getEmail());
@@ -95,7 +94,7 @@ public class UserDaoDB implements UserDao {
 
     @Override
     public void deleteUserByLogin(String login) throws DaoException {
-        try (Connection connection = connectionManager.getConnection();
+        try (Connection connection = ConnectionPoolCustom.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(DELETE_USER_BY_LOGIN)) {
             preparedStatement.setString(1, login);
             preparedStatement.executeUpdate();
@@ -106,7 +105,7 @@ public class UserDaoDB implements UserDao {
 
     @Override
     public void updateUser(User user) throws DaoException {
-        try (Connection connection = connectionManager.getConnection();
+        try (Connection connection = ConnectionPoolCustom.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER)) {
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getEmail());

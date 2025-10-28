@@ -5,61 +5,91 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class ConnectionPoolCustom {
+    private static ConnectionPoolCustom instance = null;
     private String url;
     private String daoUser;
     private String daoPassword;
     private int maxPoolSize;
 
     private final BlockingQueue<Connection> availableConnections = new LinkedBlockingQueue<>();
-    private final Set<Connection> usedConnections = new HashSet<>();
+    private final Set<Connection> usedConnections = Collections.synchronizedSet(new HashSet<>());
 
-    public ConnectionPoolCustom(String url, String daoUser, String daoPassword, int maxPoolSize) throws SQLException {
+    public synchronized static void initializeConnectionPool(String url, String daoUser, String daoPassword, int maxPoolSize) throws SQLException {
+        if (instance == null) {
+                instance = new ConnectionPoolCustom(url, daoUser, daoPassword, maxPoolSize);
+        }
+    }
+
+    public static ConnectionPoolCustom getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("ConnectionPool not initialized");
+        }
+        return instance;
+    }
+
+    private ConnectionPoolCustom(String url, String daoUser, String daoPassword, int maxPoolSize) throws SQLException {
         this.url = url;
         this.daoUser = daoUser;
         this.daoPassword = daoPassword;
         this.maxPoolSize = maxPoolSize;
-        createNewConnection();
+        initializeDefaultConnections();
     }
 
-    public synchronized Connection getConnection() throws SQLException {
-        if (availableConnections.isEmpty() && usedConnections.size() < maxPoolSize) {
+    private void initializeDefaultConnections() throws SQLException {
+        int initialSize = Math.min(2, maxPoolSize);
+        for (int i = 0; i < initialSize; i++) {
             createNewConnection();
-        }
-        try {
-            Connection connection = availableConnections.take();
-            usedConnections.add(connection);
-            return connection;
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Error getting connection from pool", e);
         }
     }
 
     private void createNewConnection() throws SQLException {
         if (availableConnections.size() + usedConnections.size() < maxPoolSize) {
-            Connection connection = new PooledConnection(DriverManager.getConnection(url, daoUser, daoPassword));
-            availableConnections.add(connection);
-        } else {
-            throw new IllegalStateException("Max pool size has been reached");
+            synchronized (this) {
+                if (availableConnections.size() + usedConnections.size() < maxPoolSize) {
+                    Connection connection = new PooledConnection(DriverManager.getConnection(url, daoUser, daoPassword));
+                    availableConnections.add(connection);
+                }
+            }
         }
     }
 
-    public void closeConnection(Connection connection) {
+    public Connection getConnection() throws SQLException {
+        int timeoutMilliseconds = 500;
+        long deadlineConnectionAwaiting = System.currentTimeMillis() + 5000;
+        try {
+            while (System.currentTimeMillis() < deadlineConnectionAwaiting) {
+                Connection connection = availableConnections.poll(timeoutMilliseconds, TimeUnit.MILLISECONDS);
+                if (connection != null) {
+                    usedConnections.add(connection);
+                    return connection;
+                } else {
+                    createNewConnection();
+                }
+            }
+            throw new SQLException("Timeout waiting for connection");
+        } catch (InterruptedException e) {
+            throw new SQLException("Error getting connection from pool", e);
+        }
+    }
+
+    public void closeConnection(Connection connection) throws SQLException {
         if (connection == null) {
             return;
         }
+        connection.setAutoCommit(true);
         usedConnections.remove(connection);
         availableConnections.add(connection);
     }
 
     public void shutdownPool() throws SQLException {
         for (Connection availableConnection : availableConnections) {
-            ((PooledConnection)availableConnection).realConnection.close();
+            ((PooledConnection) availableConnection).realConnection.close();
         }
         for (Connection usedConnection : usedConnections) {
-            ((PooledConnection)usedConnection).realConnection.close();
+            ((PooledConnection) usedConnection).realConnection.close();
         }
     }
 

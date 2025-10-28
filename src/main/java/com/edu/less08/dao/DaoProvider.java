@@ -6,8 +6,6 @@ public class DaoProvider {
     private static final DaoProvider instance = new DaoProvider();
     private UserDao userDao;
     private NewsDao newsDao;
-    private RoleDao roleDao;
-    private StatusDao statusDao;
     private NewsContextStorageDao newsContextStorageDao;
 
 
@@ -31,19 +29,6 @@ public class DaoProvider {
         return newsDao;
     }
 
-    public RoleDao getRoleDao() {
-        if (roleDao == null) {
-            roleDao = new RoleDaoDB();
-        }
-        return roleDao;
-    }
-
-    public StatusDao getStatusDao() {
-        if (statusDao == null) {
-            statusDao = new StatusDaoDB();
-        }
-        return statusDao;
-    }
 
     public NewsContextStorageDao getNewsContextStorageDao() {
         if (newsContextStorageDao == null) {

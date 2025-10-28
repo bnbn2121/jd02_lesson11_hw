@@ -42,9 +42,9 @@
                     <nav aria-label="Page navigation" class="mt-4">
                         <ul class="pagination justify-content-center">
                             <!-- Кнопка "Предыдущая" -->
-                            <li class="page-item ${requestScope.viewPage == 1 ? 'disabled' : ''}">
+                            <li class="page-item ${requestScope.currentPage == 1 ? 'disabled' : ''}">
                                 <a class="page-link"
-                                   href="Controller?command=go_to_main_page&viewPage=${prevPage}"
+                                   href="Controller?command=go_to_main_page&currentPage=${prevPage}"
                                    aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
@@ -52,15 +52,15 @@
 
                             <!-- Номера страниц -->
                             <c:forEach begin="1" end="${requestScope.totalPages}" var="pageNum">
-                                <li class="page-item ${pageNum == requestScope.viewPage ? 'active' : ''}">
-                                    <a class="page-link" href="Controller?command=go_to_main_page&viewPage=${pageNum}">${pageNum}</a>
+                                <li class="page-item ${pageNum == requestScope.currentPage ? 'active' : ''}">
+                                    <a class="page-link" href="Controller?command=go_to_main_page&currentPage=${pageNum}">${pageNum}</a>
                                 </li>
                             </c:forEach>
 
                             <!-- Кнопка "Следующая" -->
-                            <li class="page-item ${requestScope.viewPage == requestScope.totalPages ? 'disabled' : ''}">
+                            <li class="page-item ${requestScope.currentPage == requestScope.totalPages ? 'disabled' : ''}">
                                 <a class="page-link"
-                                   href="Controller?command=go_to_main_page&viewPage=${nextPage}"
+                                   href="Controller?command=go_to_main_page&currentPage=${nextPage}"
                                    aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>

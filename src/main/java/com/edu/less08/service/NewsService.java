@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface NewsService {
     List<News> getNews(int indexFirst, int countNews) throws ServiceException;
-    News addNews(String title, String brief, String content, String imagePath, int publisherId) throws ServiceException;
+    News addNews(String title, String brief, String content, String imagePath, String publisherLogin) throws ServiceException;
     int getAllActiveNewsCount() throws ServiceException;
 }

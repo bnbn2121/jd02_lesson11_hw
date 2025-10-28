@@ -5,7 +5,6 @@ import com.edu.less08.model.UserView;
 import com.edu.less08.service.ServiceProvider;
 import com.edu.less08.service.UserSecurityService;
 import com.edu.less08.service.ServiceException;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

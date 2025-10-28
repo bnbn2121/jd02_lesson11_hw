@@ -5,6 +5,7 @@ public enum CommandName {
     GO_TO_MAIN_PAGE,
     GO_TO_AUTH_PAGE,
     GO_TO_REGISTRATION_PAGE,
+    GO_TO_NEWS_REDACTOR_PAGE,
     DO_AUTH,
     DO_REGISTRATION,
     DO_LOG_OUT,

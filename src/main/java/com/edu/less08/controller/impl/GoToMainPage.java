@@ -8,71 +8,85 @@ import com.edu.less08.service.ServiceProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
 
 public class GoToMainPage implements Command {
     private final NewsService newsService = ServiceProvider.getInstance().getNewsService();
-    private int newsPerPage = 3;
-    private int totalPages;
-    private int currentPage;
-    private int prevPage;
-    private int nextPage;
+    private static final int NEWS_PER_PAGE_DEFAULT = 3;
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            getCurrentPage(request);
-            calcTotalPages(request, response);
-
-            if (totalPages > 0) {
-                List<News> listNews = loadListNews();
-                setPaginationLinks();
-
-                request.setAttribute("listNews", listNews);
-                request.setAttribute("totalPages", totalPages);
-                request.setAttribute("prevPage", prevPage);
-                request.setAttribute("nextPage", nextPage);
+            int currentPage = getCurrentPage(request);
+            int newsPerPage = getCountNewsPerPage(request);
+            int totalPages = calcTotalPages(newsPerPage);
+            if (totalPages == 0) {
                 request.getRequestDispatcher("/WEB-INF/jsp/main.jsp").forward(request, response);
+                return;
             }
+            if (currentPage > totalPages) {
+                currentPage = 1;
+            }
+            List<News> listNews = loadListNews(currentPage, newsPerPage);
+            request.setAttribute("listNews", listNews);
+
+            setPaginationLinks(request, currentPage, totalPages);
+            request.getRequestDispatcher("/WEB-INF/jsp/main.jsp").forward(request, response);
         } catch (ServiceException e) {
-            //обработать нормально
+            System.out.println(4);
+            response.sendRedirect("Controller?command=NO_SUCH_COMMAND");
         }
     }
 
-    private void getCurrentPage(HttpServletRequest request){
-        String viewPageParameter = request.getParameter("viewPage");
-        if (viewPageParameter==null) {
-            currentPage = 1;
+    private int getCurrentPage(HttpServletRequest request) {
+        String viewPageParameter = request.getParameter("currentPage");
+        if (viewPageParameter == null) {
+            return 1;
         } else {
-            currentPage = Integer.parseInt(viewPageParameter);
+            return Integer.parseInt(viewPageParameter);
         }
     }
 
-    private void calcTotalPages(HttpServletRequest request, HttpServletResponse response) throws ServiceException, ServletException, IOException {
+    private int calcTotalPages(int newsPerPage) throws ServiceException {
         int totalActiveNews = newsService.getAllActiveNewsCount();
         if (totalActiveNews == 0) {
-            totalPages = 0;
-            request.getRequestDispatcher("/WEB-INF/jsp/main.jsp").forward(request, response);
-            return;
+            return 0;
         }
-        totalPages = (int) Math.ceil(1.0 * totalActiveNews / newsPerPage);
+        return (int) Math.ceil(1.0 * totalActiveNews / newsPerPage);
     }
 
-    private List<News> loadListNews() throws ServiceException {
+    private List<News> loadListNews(int currentPage, int newsPerPage) throws ServiceException {
         int indexFirstNewsForLoad = (currentPage - 1) * newsPerPage;
         return newsService.getNews(indexFirstNewsForLoad, newsPerPage);
     }
 
-    private void setPaginationLinks() {
-        prevPage = currentPage - 1;
-        nextPage = currentPage + 1;
+    private void setPaginationLinks(HttpServletRequest request, int currentPage, int totalPages) {
+        int prevPage = currentPage - 1;
+        int nextPage = currentPage + 1;
         if (prevPage == 0) {
             prevPage = 1;
         }
         if (nextPage > totalPages) {
             nextPage = totalPages;
         }
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("prevPage", prevPage);
+        request.setAttribute("nextPage", nextPage);
+
+    }
+
+    private int getCountNewsPerPage(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        int newsPerPage;
+        if (session.getAttribute("newsPerPage") == null) {
+            newsPerPage = NEWS_PER_PAGE_DEFAULT;
+        } else {
+            newsPerPage = (int) request.getSession().getAttribute("newsPerPage");
+        }
+        return newsPerPage;
     }
 }

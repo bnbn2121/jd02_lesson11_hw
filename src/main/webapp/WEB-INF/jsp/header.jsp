@@ -29,6 +29,11 @@
                             </span>
                         </div>
 
+                        <!-- Кнопка Создать новость (только для авторизованных) -->
+                        <a href="Controller?command=GO_TO_NEWS_REDACTOR_PAGE" class="btn btn-outline-success me-3">
+                            <i class="fas fa-plus-circle"></i> Предложить новость
+                        </a>
+
                         <!-- Выбор языка -->
                         <div class="dropdown me-3">
                             <button class="btn btn-outline-light dropdown-toggle" type="button"

@@ -13,9 +13,11 @@ public class CommandProvider {
         commandsMap.put(CommandName.GO_TO_MAIN_PAGE, new GoToMainPage());
         commandsMap.put(CommandName.GO_TO_AUTH_PAGE, new GoToAuthPage());
         commandsMap.put(CommandName.GO_TO_REGISTRATION_PAGE, new GoToRegistrationPage());
+        commandsMap.put(CommandName.GO_TO_NEWS_REDACTOR_PAGE, new GoToNewsRedactorPage());
         commandsMap.put(CommandName.DO_AUTH, new DoAuth());
         commandsMap.put(CommandName.DO_REGISTRATION, new DoRegistration());
         commandsMap.put(CommandName.DO_LOG_OUT, new DoLogOut());
+        commandsMap.put(CommandName.ADD_NEWS, new AddNews());
     }
 
     private CommandProvider() {}
