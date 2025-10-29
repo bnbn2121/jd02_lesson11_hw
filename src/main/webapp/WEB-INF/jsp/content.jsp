@@ -1,3 +1,4 @@
+jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -8,8 +9,8 @@
                 <h2 class="mb-4">Последние новости</h2>
 
                 <c:choose>
-                    <c:when test="${not empty requestScope.listNews}">
-                        <c:forEach var="news" items="${requestScope.listNews}">
+                    <c:when test="${not empty sessionScope.listNews}">
+                        <c:forEach var="news" items="${sessionScope.listNews}">
                             <div class="card news-card mb-4">
                                 <div class="row g-0">
                                     <div class="col-md-4">
@@ -17,12 +18,17 @@
                                              class="img-fluid news-image" alt="${news.title}">
                                     </div>
                                     <div class="col-md-8">
-                                        <div class="news-content p-3">
+                                        <div class="news-content p-3 d-flex flex-column h-100">
                                             <h3 class="card-title">${news.title}</h3>
-                                            <p class="card-text">${news.brief}</p>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <small class="text-muted">${news.publishDate}</small>
-                                                <a href="#" class="btn btn-primary">Читать далее</a>
+                                            <p class="card-text flex-grow-1">${news.brief}</p>
+                                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                                <div class="news-meta">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-user me-1"></i>${news.publisher.login}
+                                                    </small>
+                                                    <small class="text-muted d-block">${news.publishDate}</small>
+                                                </div>
+                                                <a href="Controller?command=VIEW_NEWS&newsId=${news.id}&returnPage=${requestScope.currentPage}" class="btn btn-primary">Читать далее</a>
                                             </div>
                                         </div>
                                     </div>

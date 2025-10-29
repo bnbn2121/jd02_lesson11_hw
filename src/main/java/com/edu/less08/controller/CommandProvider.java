@@ -18,6 +18,7 @@ public class CommandProvider {
         commandsMap.put(CommandName.DO_REGISTRATION, new DoRegistration());
         commandsMap.put(CommandName.DO_LOG_OUT, new DoLogOut());
         commandsMap.put(CommandName.ADD_NEWS, new AddNews());
+        commandsMap.put(CommandName.VIEW_NEWS, new ViewNews());
     }
 
     private CommandProvider() {}

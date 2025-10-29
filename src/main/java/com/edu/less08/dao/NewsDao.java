@@ -13,5 +13,5 @@ public interface NewsDao {
     News addNews(News news, String content) throws DaoException;
     void deleteNewsById(int idNews) throws DaoException;
     void updateNews(News news) throws DaoException;
-    int getAllNewsCount(Status... status) throws DaoException;
+    int getCountNews(Status... status) throws DaoException;
 }

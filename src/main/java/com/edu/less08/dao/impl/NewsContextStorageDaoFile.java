@@ -4,20 +4,34 @@ import com.edu.less08.dao.DaoException;
 import com.edu.less08.dao.NewsContextStorageDao;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Properties;
 
 public class NewsContextStorageDaoFile implements NewsContextStorageDao {
-    private String storagePath = "content_storage";
+    private String storagePath = "C:/NewsApp/content_storage";
 
     public NewsContextStorageDaoFile() {
+        storagePath = loadPathFromProperties();
         createDirectories();
     }
 
     public NewsContextStorageDaoFile(String storagePath) {
         this.storagePath = storagePath;
         createDirectories();
+    }
+
+    private String loadPathFromProperties() {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
+            if (input != null) {
+                Properties properties = new Properties();
+                properties.load(input);
+                return properties.getProperty("news.storage.path");
+            }
+        } catch (IOException e) {}
+        return"C:/NewsApp/content_storage";
     }
 
     private void createDirectories() {
@@ -57,6 +71,20 @@ public class NewsContextStorageDaoFile implements NewsContextStorageDao {
         if (!Files.exists(filePath)) {
             throw new DaoException("context file not found");
         }
+            String context = Files.readString(filePath);
+            return context;
+        } catch (IOException e) {
+            throw new DaoException(e);
+        }
+    }
+
+    @Override
+    public String getContextByPath(String path) throws DaoException {
+        try {
+            Path filePath = Path.of(path);
+            if (!Files.exists(filePath)) {
+                throw new DaoException("context file not found");
+            }
             String context = Files.readString(filePath);
             return context;
         } catch (IOException e) {

@@ -14,6 +14,7 @@ public enum CommandName {
     REMOVE_COMMENT,
     ADD_COMPLAINT,
     PROCESS_COMPLAINT,
+    VIEW_NEWS,
     ADD_NEWS,
     APPROVE_NEWS,
     REMOVE_NEWS,

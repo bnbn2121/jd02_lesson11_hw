@@ -230,24 +230,6 @@
                 alert('Пожалуйста, заполните все обязательные поля (отмеченные *)');
                 return false;
             }
-
-            if (title.length < 5) {
-                e.preventDefault();
-                alert('Заголовок должен содержать не менее 5 символов');
-                return false;
-            }
-
-            if (brief.length < 10) {
-                e.preventDefault();
-                alert('Краткое описание должно содержать не менее 10 символов');
-                return false;
-            }
-
-            if (content.length < 50) {
-                e.preventDefault();
-                alert('Полный текст новости должен содержать не менее 50 символов');
-                return false;
-            }
         });
     </script>
 </body>

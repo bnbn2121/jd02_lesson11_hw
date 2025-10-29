@@ -14,13 +14,13 @@ public class NewsServiceImpl implements NewsService {
     private final NewsDao newsDao = DaoProvider.getInstance().getNewsDao();
     private final UserDao userDao = DaoProvider.getInstance().getUserDao();
 
-    private News createNewsPrototype(String title, String brief, String imagePath, int publisherId) throws ServiceException {
+    private News createNewsPrototype(String title, String brief, String imagePath, User publisher) throws ServiceException {
         News.NewsBuilder builder = new News.NewsBuilder();
         News prototypeNews = builder
                 .setTitle(title)
                 .setBrief(brief)
                 .setImagePath(imagePath)
-                .setPublisherId(publisherId)
+                .setPublisher(publisher)
                 .build();
         return prototypeNews;
     }
@@ -41,8 +41,7 @@ public class NewsServiceImpl implements NewsService {
             if (optionalUser.isEmpty()) {
                 throw new ServiceException().setUserMessage("error identification user");
             }
-            int publisherId = optionalUser.get().getId();
-            News prototypeNews = createNewsPrototype(title, brief, imagePath, publisherId);
+            News prototypeNews = createNewsPrototype(title, brief, imagePath, optionalUser.get());
             return newsDao.addNews(prototypeNews, content);
         } catch (DaoException e) {
             throw new ServiceException(e);
@@ -52,7 +51,20 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public int getAllActiveNewsCount() throws ServiceException {
         try {
-            return newsDao.getAllNewsCount(Status.ACTIVE);
+            return newsDao.getCountNews(Status.ACTIVE);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public News getNewsById(int id) throws ServiceException {
+        try {
+            Optional<News> optionalNews = newsDao.getNewsById(id);
+            if (optionalNews.isEmpty()) {
+                throw new ServiceException("news not found");
+            }
+            return optionalNews.get();
         } catch (DaoException e) {
             throw new ServiceException(e);
         }

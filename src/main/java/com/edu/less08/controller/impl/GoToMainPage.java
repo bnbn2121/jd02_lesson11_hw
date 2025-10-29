@@ -31,13 +31,12 @@ public class GoToMainPage implements Command {
                 currentPage = 1;
             }
             List<News> listNews = loadListNews(currentPage, newsPerPage);
-            request.setAttribute("listNews", listNews);
+            request.getSession().setAttribute("listNews", listNews);
 
             setPaginationLinks(request, currentPage, totalPages);
             request.getRequestDispatcher("/WEB-INF/jsp/main.jsp").forward(request, response);
         } catch (ServiceException e) {
-            System.out.println(4);
-            response.sendRedirect("Controller?command=NO_SUCH_COMMAND");
+            response.sendRedirect("Controller?command=GO_TO_ERROR_PAGE");
         }
     }
 

@@ -8,4 +8,5 @@ public interface NewsService {
     List<News> getNews(int indexFirst, int countNews) throws ServiceException;
     News addNews(String title, String brief, String content, String imagePath, String publisherLogin) throws ServiceException;
     int getAllActiveNewsCount() throws ServiceException;
+    News getNewsById(int id) throws ServiceException;
 }

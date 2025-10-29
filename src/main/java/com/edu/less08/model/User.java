@@ -11,6 +11,9 @@ public class User implements Serializable {
     private int roleId;
     private int statusId;
 
+    public User() {
+    }
+
     public User(int id, String login, String email, String password, int roleId, int statusId) {
         this.id = id;
         this.login = login;

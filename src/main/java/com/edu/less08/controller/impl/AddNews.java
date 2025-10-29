@@ -24,9 +24,9 @@ public class AddNews implements Command {
         try {
             News news = newsService.addNews(title, brief, content, imagePath, publisher.getLogin());
             System.out.println(news.getTitle());
-            System.out.println(news.getPublisherId());
-            System.out.println(news.getStatusId());
-            System.out.println(news.getContentPath());
+            System.out.println(news.getPublisher());
+            System.out.println(news.getStatus());
+            System.out.println(news.getContent());
             System.out.println(news.getPublishDate());
             response.sendRedirect("Controller?command=go_to_main_page");
         } catch (ServiceException e) {

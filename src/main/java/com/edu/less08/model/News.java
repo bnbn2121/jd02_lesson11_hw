@@ -8,11 +8,11 @@ public class News implements Serializable {
     private int id;
     private String title;
     private String brief;
-    private String contentPath;
+    private String content;
     private String imagePath;
     private LocalDate publishDate;
-    private int publisherId;
-    private int statusId;
+    private User publisher;
+    private Status status;
 
     public News() {
     }
@@ -21,22 +21,22 @@ public class News implements Serializable {
         this.id = builder.id;
         this.title = builder.title;
         this.brief = builder.brief;
-        this.contentPath = builder.contentPath;
+        this.content = builder.content;
         this.imagePath = builder.imagePath;
         this.publishDate = builder.publishDate;
-        this.publisherId = builder.publisherId;
-        this.statusId = builder.statusId;
+        this.publisher = builder.publisher;
+        this.status = builder.status;
     }
 
     public static class NewsBuilder {
         private int id;
         private String title;
         private String brief;
-        private String contentPath;
+        private String content;
         private String imagePath;
         private LocalDate publishDate;
-        private int publisherId;
-        private int statusId;
+        private User publisher;
+        private Status status;
 
         public NewsBuilder setId(int id) {
             this.id = id;
@@ -53,8 +53,8 @@ public class News implements Serializable {
             return this;
         }
 
-        public NewsBuilder setContentPath(String contentPath) {
-            this.contentPath = contentPath;
+        public NewsBuilder setContent(String content) {
+            this.content = content;
             return this;
         }
 
@@ -68,13 +68,13 @@ public class News implements Serializable {
             return this;
         }
 
-        public NewsBuilder setPublisherId(int publisherId) {
-            this.publisherId = publisherId;
+        public NewsBuilder setPublisher(User publisher) {
+            this.publisher = publisher;
             return this;
         }
 
-        public NewsBuilder setStatusId(int statusId) {
-            this.statusId = statusId;
+        public NewsBuilder setStatus(Status status) {
+            this.status = status;
             return this;
         }
 
@@ -88,7 +88,7 @@ public class News implements Serializable {
             this.id = 0;
             this.title = null;
             this.brief = null;
-            this.contentPath = null;
+            this.content = null;
             this.imagePath = null;
             this.publishDate = null;
         }
@@ -118,12 +118,12 @@ public class News implements Serializable {
         this.brief = brief;
     }
 
-    public String getContentPath() {
-        return contentPath;
+    public String getContent() {
+        return content;
     }
 
-    public void setContentPath(String contentPath) {
-        this.contentPath = contentPath;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getImagePath() {
@@ -142,20 +142,20 @@ public class News implements Serializable {
         this.publishDate = publishDate;
     }
 
-    public int getPublisherId() {
-        return publisherId;
+    public User getPublisher() {
+        return publisher;
     }
 
-    public void setPublisherId(int publisherId) {
-        this.publisherId = publisherId;
+    public void setPublisher(User publisher) {
+        this.publisher = publisher;
     }
 
-    public int getStatusId() {
-        return statusId;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setStatusId(int statusId) {
-        this.statusId = statusId;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override
@@ -164,12 +164,12 @@ public class News implements Serializable {
             return false;
         }
         News news = (News) o;
-        return id == news.id && publisherId == news.publisherId && statusId == news.statusId && Objects.equals(title, news.title) && Objects.equals(brief, news.brief) && Objects.equals(contentPath, news.contentPath) && Objects.equals(imagePath, news.imagePath) && Objects.equals(publishDate, news.publishDate);
+        return id == news.id && Objects.equals(title, news.title) && Objects.equals(brief, news.brief) && Objects.equals(content, news.content) && Objects.equals(imagePath, news.imagePath) && Objects.equals(publishDate, news.publishDate) && Objects.equals(publisher, news.publisher) && status == news.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, brief, contentPath, imagePath, publishDate, publisherId, statusId);
+        return Objects.hash(id, title, brief, content, imagePath, publishDate, publisher, status);
     }
 
     @Override
@@ -178,11 +178,11 @@ public class News implements Serializable {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", brief='" + brief + '\'' +
-                ", content='" + contentPath + '\'' +
-                ", pathImage='" + imagePath + '\'' +
+                ", content='" + content + '\'' +
+                ", imagePath='" + imagePath + '\'' +
                 ", publishDate=" + publishDate +
-                ", publisherId=" + publisherId +
-                ", statusId=" + statusId +
+                ", publisher=" + publisher +
+                ", status=" + status +
                 '}';
     }
 }
