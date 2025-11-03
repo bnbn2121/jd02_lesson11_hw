@@ -6,7 +6,7 @@ public class DaoProvider {
     private static final DaoProvider instance = new DaoProvider();
     private UserDao userDao;
     private NewsDao newsDao;
-    private NewsContextStorageDao newsContextStorageDao;
+    private NewsContentStorageDao newsContentStorageDao;
 
 
     private DaoProvider(){}
@@ -30,10 +30,10 @@ public class DaoProvider {
     }
 
 
-    public NewsContextStorageDao getNewsContextStorageDao() {
-        if (newsContextStorageDao == null) {
-            newsContextStorageDao = new NewsContextStorageDaoFile();
+    public NewsContentStorageDao getNewsContentStorageDao() {
+        if (newsContentStorageDao == null) {
+            newsContentStorageDao = new NewsContentStorageDaoFile();
         }
-        return newsContextStorageDao;
+        return newsContentStorageDao;
     }
 }

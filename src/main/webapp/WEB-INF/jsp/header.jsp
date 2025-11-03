@@ -30,7 +30,7 @@
                         </div>
 
                         <!-- Кнопка Создать новость (только для авторизованных) -->
-                        <a href="Controller?command=GO_TO_NEWS_REDACTOR_PAGE" class="btn btn-outline-success me-3">
+                        <a href="Controller?command=GO_TO_NEWS_REDACTOR_PAGE&currentPage=${requestScope.currentPage}" class="btn btn-outline-success me-3">
                             <i class="fas fa-plus-circle"></i> Предложить новость
                         </a>
 

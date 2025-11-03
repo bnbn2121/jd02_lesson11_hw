@@ -27,7 +27,7 @@ public class RememberMeFilter extends HttpFilter {
                                 Cookie::getValue
                         ));
                 if (cookieMap.get("rememberMe") != null) {
-                    UserView user = new UserView(cookieMap.get("login"), cookieMap.get("email"), cookieMap.get("role"));
+                    UserView user = new UserView(Integer.parseInt(cookieMap.get("id")), cookieMap.get("login"), cookieMap.get("email"), cookieMap.get("role"));
                     req.getSession().setAttribute("user", user);
                 }
             }

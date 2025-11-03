@@ -49,11 +49,12 @@ public class UserSecurityImpl implements UserSecurityService {
 
     private UserView convertToUserView(User user) throws ServiceException{
         try {
+            int userId = user.getId();
             String userLogin = user.getLogin();
             String userEmail = user.getEmail();
             int userRoleId = user.getRoleId();
             String userRole = RoleUtil.getRoleNameById(userRoleId).name();
-            UserView userView = new UserView(userLogin, userEmail, userRole);
+            UserView userView = new UserView(userId, userLogin, userEmail, userRole);
             return userView;
         } catch (DaoException e) {
             throw new ServiceException(e);

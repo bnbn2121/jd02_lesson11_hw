@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @WebFilter("/Controller")
 @Priority(3)
@@ -46,40 +47,45 @@ public class AccessControlFilter extends HttpFilter {
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpSession session = req.getSession(false);
         CommandName commandName = CommandProvider.getCommandName(req.getParameter("command"));
-        UserRole role = getRole(session);
-        if (hasAccess(commandName, role)) {
+        Optional<UserView> optionalUser = getUserView(session);
+        if (hasAccess(commandName, optionalUser)) {
             chain.doFilter(req, res);
         } else {
             redirectToMainPageWithErrorAccess(req, res);
         }
     }
 
-    private UserRole getRole(HttpSession session) {
+    private Optional<UserView> getUserView(HttpSession session) {
         if (session == null || session.getAttribute("user") == null) {
-            return UserRole.GUEST;
+            return Optional.empty();
         } else {
-            String roleName = ((UserView)session.getAttribute("user")).getRole();
-            return UserRole.valueOf(roleName);
+            return Optional.of((UserView) session.getAttribute("user"));
         }
     }
 
-    private boolean hasAccess(CommandName commandName, UserRole role) {
+    private boolean hasAccess(CommandName commandName, Optional<UserView> optionalUser) {
+        UserRole userRole;
+        if (optionalUser.isPresent()) {
+            userRole = UserRole.valueOf(optionalUser.get().getRole());
+        } else {
+            userRole = UserRole.GUEST;
+        }
         if(adminCommands.contains(commandName)) {
-            if (role == UserRole.SUPERADMIN || role == UserRole.ADMIN) {
+            if (userRole == UserRole.SUPERADMIN || userRole == UserRole.ADMIN) {
                 return true;
             } else {
                 return false;
             }
         }
         if(moderatorCommands.contains(commandName)) {
-            if (role == UserRole.SUPERADMIN || role == UserRole.ADMIN || role == UserRole.MODERATOR) {
+            if (userRole == UserRole.SUPERADMIN || userRole == UserRole.ADMIN || userRole == UserRole.MODERATOR) {
                 return true;
             } else {
                 return false;
             }
         }
         if(authorizedUserCommands.contains(commandName)) {
-            if (role == UserRole.GUEST) {
+            if (userRole == UserRole.GUEST) {
                 return false;
             } else {
                 return true;

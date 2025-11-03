@@ -88,12 +88,14 @@
 
                 <form action="Controller" method="post" id="newsForm">
                     <!-- Скрытое поле для команды -->
-                    <input type="hidden" name="command" value="${not empty requestScope.news ? 'UPDATE_NEWS' : 'ADD_NEWS'}">
+                    <input type="hidden" name="command" value="${not empty requestScope.news ? 'EDIT_NEWS' : 'ADD_NEWS'}">
 
                     <!-- Скрытое поле ID новости для редактирования -->
                     <c:if test="${not empty requestScope.news}">
                         <input type="hidden" name="newsId" value="${requestScope.news.id}">
                     </c:if>
+
+                    <input type="hidden" name="currentPage" value="${requestScope.currentPage}">
 
                     <!-- Заголовок новости -->
                     <div class="mb-3">
@@ -125,7 +127,7 @@
                             <span class="input-group-text"><i class="fas fa-align-left"></i></span>
                             <textarea class="form-control" id="content" name="content" required
                                       placeholder="Введите полный текст новости"
-                                      rows="8">${requestScope.content}</textarea>
+                                      rows="8">${requestScope.news.content}</textarea>
                         </div>
                     </div>
 
@@ -148,7 +150,7 @@
 
                     <!-- Кнопки действий -->
                     <div class="d-flex justify-content-between mt-4">
-                        <a href="Controller?command=go_to_main_page" class="btn btn-outline-secondary">
+                        <a href="Controller?command=go_to_main_page&currentPage=${requestScope.currentPage}" class="btn btn-outline-secondary">
                             <i class="fas fa-arrow-left me-2"></i>Вернуться на главную
                         </a>
 

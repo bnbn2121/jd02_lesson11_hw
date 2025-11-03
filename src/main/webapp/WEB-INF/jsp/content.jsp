@@ -1,4 +1,3 @@
-jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -9,8 +8,8 @@ jsp
                 <h2 class="mb-4">Последние новости</h2>
 
                 <c:choose>
-                    <c:when test="${not empty sessionScope.listNews}">
-                        <c:forEach var="news" items="${sessionScope.listNews}">
+                    <c:when test="${not empty requestScope.listNews}">
+                        <c:forEach var="news" items="${requestScope.listNews}">
                             <div class="card news-card mb-4">
                                 <div class="row g-0">
                                     <div class="col-md-4">
@@ -28,7 +27,7 @@ jsp
                                                     </small>
                                                     <small class="text-muted d-block">${news.publishDate}</small>
                                                 </div>
-                                                <a href="Controller?command=VIEW_NEWS&newsId=${news.id}&returnPage=${requestScope.currentPage}" class="btn btn-primary">Читать далее</a>
+                                                <a href="Controller?command=VIEW_NEWS&newsId=${news.id}&currentPage=${requestScope.currentPage}" class="btn btn-primary">Читать далее</a>
                                             </div>
                                         </div>
                                     </div>

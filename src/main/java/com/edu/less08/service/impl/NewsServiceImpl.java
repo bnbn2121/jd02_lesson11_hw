@@ -28,16 +28,16 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public List<News> getNews(int indexFirst, int countNews) throws ServiceException {
         try {
-            return newsDao.getNewsPaginated(indexFirst, countNews);
+            return newsDao.getNewsPaginatedWithoutContent(indexFirst, countNews);
         } catch (DaoException e) {
             throw new ServiceException(e);
         }
     }
 
     @Override
-    public News addNews(String title, String brief, String content, String imagePath, String publisherLogin) throws ServiceException {
+    public News addNews(String title, String brief, String content, String imagePath, int publisherId) throws ServiceException {
         try {
-            Optional<User> optionalUser = userDao.getUserByLogin(publisherLogin);
+            Optional<User> optionalUser = userDao.getUserById(publisherId);
             if (optionalUser.isEmpty()) {
                 throw new ServiceException().setUserMessage("error identification user");
             }
@@ -51,7 +51,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public int getAllActiveNewsCount() throws ServiceException {
         try {
-            return newsDao.getCountNews(Status.ACTIVE);
+            return newsDao.getCountNewsByStatus(Status.ACTIVE);
         } catch (DaoException e) {
             throw new ServiceException(e);
         }
@@ -65,6 +65,22 @@ public class NewsServiceImpl implements NewsService {
                 throw new ServiceException("news not found");
             }
             return optionalNews.get();
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    @Override
+    public News updateNews(int newsId, String newTitle, String newBrief, String newContent, String newImagePath, Status newStatus) throws ServiceException {
+        try {
+            News newsForUpdate = getNewsById(newsId);
+            newsForUpdate.setTitle(newTitle);
+            newsForUpdate.setBrief(newBrief);
+            newsForUpdate.setContent(newContent);
+            newsForUpdate.setImagePath(newImagePath);
+            newsForUpdate.setStatus(newStatus);
+            newsDao.updateNews(newsForUpdate);
+            return newsForUpdate;
         } catch (DaoException e) {
             throw new ServiceException(e);
         }

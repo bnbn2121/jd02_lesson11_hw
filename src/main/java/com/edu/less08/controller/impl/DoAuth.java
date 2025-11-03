@@ -25,6 +25,7 @@ public class DoAuth implements Command {
             request.getSession().setAttribute("rememberMe", rememberMe);
             if (rememberMe != null) {
                 addCookieWithTimeLife("rememberMe", rememberMe, 14, response);
+                addCookieWithTimeLife("id", String.valueOf(user.getId()), 14, response);
                 addCookieWithTimeLife("login", user.getLogin(), 14, response);
                 addCookieWithTimeLife("email", user.getEmail(), 14, response);
                 addCookieWithTimeLife("role", user.getRole(), 14, response);

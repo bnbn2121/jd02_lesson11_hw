@@ -31,7 +31,7 @@ public class GoToMainPage implements Command {
                 currentPage = 1;
             }
             List<News> listNews = loadListNews(currentPage, newsPerPage);
-            request.getSession().setAttribute("listNews", listNews);
+            request.setAttribute("listNews", listNews);
 
             setPaginationLinks(request, currentPage, totalPages);
             request.getRequestDispatcher("/WEB-INF/jsp/main.jsp").forward(request, response);
@@ -42,7 +42,7 @@ public class GoToMainPage implements Command {
 
     private int getCurrentPage(HttpServletRequest request) {
         String viewPageParameter = request.getParameter("currentPage");
-        if (viewPageParameter == null) {
+        if (viewPageParameter == null || viewPageParameter.isEmpty()) {
             return 1;
         } else {
             return Integer.parseInt(viewPageParameter);

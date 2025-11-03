@@ -131,12 +131,17 @@
                                     <!-- Кнопки действий -->
                                     <div class="action-buttons">
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <a href="Controller?command=go_to_main_page&currentPage=${requestScope.returnPage}" class="btn btn-outline-secondary">
+                                            <a href="Controller?command=go_to_main_page&currentPage=${requestScope.currentPage}" class="btn btn-outline-secondary">
                                                 <i class="fas fa-arrow-left me-2"></i>Назад к списку новостей
                                             </a>
 
-                                            <c:if test="${not empty sessionScope.user && sessionScope.user.id == news.publisher.id}">
-                                                <a href="Controller?command=GO_TO_NEWS_REDACTOR_PAGE&newsId=${news.id}" class="btn btn-outline-primary">
+                                            <c:set var="isOwner" value="${sessionScope.user.id eq news.publisher.id}" />
+                                            <c:set var="isModerator" value="${sessionScope.user.role eq 'MODERATOR'}" />
+                                            <c:set var="isAdmin" value="${sessionScope.user.role eq 'ADMIN'}" />
+                                            <c:set var="isSuperadmin" value="${sessionScope.user.role eq 'SUPERADMIN'}" />
+
+                                            <c:if test="${not empty sessionScope.user && (isOwner || isModerator || isAdmin || isSuperadmin)}">
+                                                <a href="Controller?command=GO_TO_NEWS_REDACTOR_PAGE&newsId=${news.id}&currentPage=${requestScope.currentPage}" class="btn btn-outline-primary">
                                                     <i class="fas fa-edit me-2"></i>Редактировать
                                                 </a>
                                             </c:if>

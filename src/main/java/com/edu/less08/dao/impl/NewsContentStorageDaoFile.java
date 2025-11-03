@@ -1,7 +1,7 @@
 package com.edu.less08.dao.impl;
 
 import com.edu.less08.dao.DaoException;
-import com.edu.less08.dao.NewsContextStorageDao;
+import com.edu.less08.dao.NewsContentStorageDao;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,15 +10,15 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 
-public class NewsContextStorageDaoFile implements NewsContextStorageDao {
+public class NewsContentStorageDaoFile implements NewsContentStorageDao {
     private String storagePath = "C:/NewsApp/content_storage";
 
-    public NewsContextStorageDaoFile() {
+    public NewsContentStorageDaoFile() {
         storagePath = loadPathFromProperties();
         createDirectories();
     }
 
-    public NewsContextStorageDaoFile(String storagePath) {
+    public NewsContentStorageDaoFile(String storagePath) {
         this.storagePath = storagePath;
         createDirectories();
     }
@@ -43,12 +43,12 @@ public class NewsContextStorageDaoFile implements NewsContextStorageDao {
     }
 
     @Override
-    public String addContext(int newsId, String context) throws DaoException {
+    public String addContent(int newsId, String content) throws DaoException {
         try {
             String fileName = generateFileName(newsId);
             Path filePath = getAbsFilePath(fileName);
             Files.createDirectories(filePath.getParent());
-            Files.writeString(filePath, context, StandardOpenOption.CREATE_NEW);
+            Files.writeString(filePath, content, StandardOpenOption.CREATE_NEW);
             return filePath.toAbsolutePath().toString();
         } catch (IOException e) {
             throw new DaoException("error writing file", e);
@@ -64,43 +64,43 @@ public class NewsContextStorageDaoFile implements NewsContextStorageDao {
     }
 
     @Override
-    public String getContextById(int newsId) throws DaoException {
+    public String getContentById(int newsId) throws DaoException {
         try {
         String fileName = generateFileName(newsId);
         Path filePath = getAbsFilePath(fileName);
         if (!Files.exists(filePath)) {
-            throw new DaoException("context file not found");
+            throw new DaoException("content file not found");
         }
-            String context = Files.readString(filePath);
-            return context;
+            String content = Files.readString(filePath);
+            return content;
         } catch (IOException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
-    public String getContextByPath(String path) throws DaoException {
+    public String getContentByPath(String path) throws DaoException {
         try {
             Path filePath = Path.of(path);
             if (!Files.exists(filePath)) {
-                throw new DaoException("context file not found");
+                throw new DaoException("content file not found");
             }
-            String context = Files.readString(filePath);
-            return context;
+            String content = Files.readString(filePath);
+            return content;
         } catch (IOException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
-    public String updateContextById(int newsId, String context) throws DaoException {
+    public String updateContentById(int newsId, String content) throws DaoException {
         try {
             String fileName = generateFileName(newsId);
             Path filePath = getAbsFilePath(fileName);
             if (!Files.exists(filePath)) {
-                throw new DaoException("context file not found");
+                throw new DaoException("content file not found");
             }
-            Files.writeString(filePath, context, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            Files.writeString(filePath, content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             return filePath.toAbsolutePath().toString();
         } catch (IOException e) {
             throw new DaoException("error updating file", e);
@@ -108,11 +108,11 @@ public class NewsContextStorageDaoFile implements NewsContextStorageDao {
     }
 
     @Override
-    public boolean deleteContextById(int id) throws DaoException {
+    public boolean deleteContentById(int id) throws DaoException {
         String fileName = generateFileName(id);
         Path filePath = getAbsFilePath(fileName);
         if (!Files.exists(filePath)) {
-            throw new DaoException("context file not found");
+            throw new DaoException("content file not found");
         }
         try {
             Files.delete(filePath);

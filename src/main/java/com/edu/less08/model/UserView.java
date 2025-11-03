@@ -4,14 +4,20 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class UserView implements Serializable {
+    private int id;
     private String login;
     private String email;
     private String role;
 
-    public UserView(String login, String email, String role) {
+    public UserView(int id, String login, String email, String role) {
+        this.id = id;
         this.login = login;
         this.email = email;
         this.role = role;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getEmail() {
@@ -27,23 +33,10 @@ public class UserView implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        UserView userView = (UserView) o;
-        return Objects.equals(login, userView.login) && Objects.equals(email, userView.email) && Objects.equals(role, userView.role);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(login, email, role);
-    }
-
-    @Override
     public String toString() {
         return "UserView{" +
-                "login='" + login + '\'' +
+                "id=" + id +
+                ", login='" + login + '\'' +
                 ", email='" + email + '\'' +
                 ", role='" + role + '\'' +
                 '}';

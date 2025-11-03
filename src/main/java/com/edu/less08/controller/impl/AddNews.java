@@ -14,6 +14,7 @@ import java.io.IOException;
 
 public class AddNews implements Command {
     private NewsService newsService = ServiceProvider.getInstance().getNewsService();
+
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String title = request.getParameter("title");
@@ -22,15 +23,10 @@ public class AddNews implements Command {
         String imagePath = request.getParameter("imagePath");
         UserView publisher = (UserView) request.getSession().getAttribute("user");
         try {
-            News news = newsService.addNews(title, brief, content, imagePath, publisher.getLogin());
-            System.out.println(news.getTitle());
-            System.out.println(news.getPublisher());
-            System.out.println(news.getStatus());
-            System.out.println(news.getContent());
-            System.out.println(news.getPublishDate());
+            News news = newsService.addNews(title, brief, content, imagePath, publisher.getId());
             response.sendRedirect("Controller?command=go_to_main_page");
         } catch (ServiceException e) {
-            throw new RuntimeException(e);
+            response.sendRedirect("Controller?command=GO_TO_ERROR_PAGE");
         }
 
 
