@@ -98,9 +98,9 @@ public class DB_creator {
         executeQuery(
                 "CREATE TABLE `comments` (\n" +
                         "  `id` int NOT NULL AUTO_INCREMENT,\n" +
-                        "  `content` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,\n" +
+                        "  `text` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,\n" +
                         "  `author_id` int NOT NULL,\n" +
-                        "  `publish_date` date NOT NULL,\n" +
+                        "  `publish_date` datetime NOT NULL,\n" +
                         "  `status_id` int NOT NULL,\n" +
                         "  PRIMARY KEY (`id`),\n" +
                         "  KEY `comments_users_FK` (`author_id`),\n" +
@@ -109,15 +109,17 @@ public class DB_creator {
                         "  CONSTRAINT `comments_users_FK` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`)\n" +
                         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;\n"
         );
+
+
         executeQuery(
                 "CREATE TABLE `comments_users` (\n" +
                         "  `id` int NOT NULL,\n" +
                         "  `user_id` int NOT NULL,\n" +
                         "  PRIMARY KEY (`id`),\n" +
                         "  KEY `comments_users_users_FK` (`user_id`),\n" +
-                        "  CONSTRAINT `comments_users_comments_FK` FOREIGN KEY (`id`) REFERENCES `comments` (`id`),\n" +
+                        "  CONSTRAINT `comments_users_comments_FK` FOREIGN KEY (`id`) REFERENCES `comments` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,\n" +
                         "  CONSTRAINT `comments_users_users_FK` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)\n" +
-                        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;\n"
+                        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;"
         );
         executeQuery(
                 "CREATE TABLE `news` (\n" +
@@ -141,7 +143,7 @@ public class DB_creator {
                         "  `id` int NOT NULL AUTO_INCREMENT,\n" +
                         "  `content` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,\n" +
                         "  `author_id` int NOT NULL,\n" +
-                        "  `publish_date` date NOT NULL,\n" +
+                        "  `publish_date` datetime NOT NULL,\n" +
                         "  `status_id` int NOT NULL,\n" +
                         "  `resolver_id` int DEFAULT NULL,\n" +
                         "  `resolver_comment` varchar(250) DEFAULT NULL,\n" +
@@ -169,18 +171,18 @@ public class DB_creator {
                         "  PRIMARY KEY (`id`),\n" +
                         "  KEY `reports_news_news_FK` (`news_id`),\n" +
                         "  CONSTRAINT `reports_news_news_FK` FOREIGN KEY (`news_id`) REFERENCES `news` (`id`),\n" +
-                        "  CONSTRAINT `reports_news_reports_FK` FOREIGN KEY (`id`) REFERENCES `reports` (`id`)\n" +
-                        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;\n"
+                        "  CONSTRAINT `reports_news_reports_FK` FOREIGN KEY (`id`) REFERENCES `reports` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT\n" +
+                        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;"
         );
         executeQuery(
-                "CREATE TABLE `reports_user` (\n" +
+                "CREATE TABLE `reports_users` (\n" +
                         "  `id` int NOT NULL,\n" +
                         "  `user_id` int NOT NULL,\n" +
                         "  PRIMARY KEY (`id`),\n" +
-                        "  KEY `reports_user_users_FK` (`user_id`),\n" +
-                        "  CONSTRAINT `reports_user_reports_FK` FOREIGN KEY (`id`) REFERENCES `reports` (`id`),\n" +
-                        "  CONSTRAINT `reports_user_users_FK` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)\n" +
-                        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;\n"
+                        "  KEY `reports_users_users_FK` (`user_id`),\n" +
+                        "  CONSTRAINT `reports_users_reports_FK` FOREIGN KEY (`id`) REFERENCES `reports` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,\n" +
+                        "  CONSTRAINT `reports_users_users_FK` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)\n" +
+                        ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;"
         );
         executeQuery(
                 "CREATE TABLE `comments_news` (\n" +
@@ -188,7 +190,7 @@ public class DB_creator {
                         "  `news_id` int NOT NULL,\n" +
                         "  PRIMARY KEY (`id`),\n" +
                         "  KEY `comments_news_news_FK` (`news_id`),\n" +
-                        "  CONSTRAINT `comments_news_comments_FK` FOREIGN KEY (`id`) REFERENCES `comments` (`id`),\n" +
+                        "  CONSTRAINT `comments_news_comments_FK` FOREIGN KEY (`id`) REFERENCES `comments` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,\n" +
                         "  CONSTRAINT `comments_news_news_FK` FOREIGN KEY (`news_id`) REFERENCES `news` (`id`)\n" +
                         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;"
         );

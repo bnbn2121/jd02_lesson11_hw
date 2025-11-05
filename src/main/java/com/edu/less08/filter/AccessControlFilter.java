@@ -47,7 +47,9 @@ public class AccessControlFilter extends HttpFilter {
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpSession session = req.getSession(false);
         CommandName commandName = CommandProvider.getCommandName(req.getParameter("command"));
+        System.out.println("1");
         Optional<UserView> optionalUser = getUserView(session);
+        System.out.println("2");
         if (hasAccess(commandName, optionalUser)) {
             chain.doFilter(req, res);
         } else {

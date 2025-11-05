@@ -7,6 +7,7 @@ public class DaoProvider {
     private UserDao userDao;
     private NewsDao newsDao;
     private NewsContentStorageDao newsContentStorageDao;
+    private CommentDao commentDao;
 
 
     private DaoProvider(){}
@@ -29,11 +30,17 @@ public class DaoProvider {
         return newsDao;
     }
 
-
     public NewsContentStorageDao getNewsContentStorageDao() {
         if (newsContentStorageDao == null) {
             newsContentStorageDao = new NewsContentStorageDaoFile();
         }
         return newsContentStorageDao;
+    }
+
+    public CommentDao getCommentDao() {
+        if (commentDao == null) {
+            commentDao = new CommentDaoDB();
+        }
+        return commentDao;
     }
 }

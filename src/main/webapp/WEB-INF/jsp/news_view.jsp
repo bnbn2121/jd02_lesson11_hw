@@ -57,6 +57,56 @@
             margin-top: 30px;
         }
 
+        .comments-section {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .comment-card {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .comment-date {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .comment-text {
+            color: #212529;
+            line-height: 1.5;
+        }
+
+        .no-comments {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 30px;
+        }
+
+        .add-comment-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
         @media (max-width: 991px) {
             .navbar-brand-center {
                 position: static;
@@ -148,6 +198,67 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <!-- Секция комментариев -->
+                            <div class="comments-section">
+                                <h4 class="mb-4">
+                                    <i class="fas fa-comments me-2"></i>Комментарии
+                                    <c:if test="${not empty requestScope.comments}">
+                                        <span class="badge border border-secondary text-secondary small ms-2">${requestScope.comments.size()}</span>
+                                    </c:if>
+                                </h4>
+
+                                <!-- Список комментариев -->
+                                <c:choose>
+                                    <c:when test="${not empty requestScope.comments}">
+                                        <div class="comments-list">
+                                            <c:forEach var="comment" items="${requestScope.comments}">
+                                                <div class="comment-card">
+                                                    <div class="comment-header">
+                                                        <span class="comment-author">
+                                                            <i class="fas fa-user me-1"></i>${comment.author.login}
+                                                        </span>
+                                                        <span class="comment-date">
+                                                            <i class="fas fa-calendar me-1"></i>${comment.publishDate}
+                                                        </span>
+                                                    </div>
+                                                    <div class="comment-text">
+                                                        ${comment.text}
+                                                    </div>
+                                                </div>
+                                            </c:forEach>
+                                        </div>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="no-comments">
+                                            <i class="fas fa-comment-slash fa-2x mb-3"></i>
+                                            <p>Пока нет комментариев. Будьте первым!</p>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+
+                                <!-- Форма добавления комментария -->
+                                <c:if test="${not empty sessionScope.user}">
+                                    <div class="add-comment-section">
+                                        <h5 class="mb-3">Добавить комментарий</h5>
+                                        <form action="Controller" method="post">
+                                            <input type="hidden" name="command" value="add_comment">
+                                            <input type="hidden" name="newsId" value="${news.id}">
+                                            <input type="hidden" name="currentPage" value="${requestScope.currentPage}">
+
+                                            <div class="mb-3">
+                                                <textarea class="form-control" name="commentText" rows="4"
+                                                          placeholder="Введите ваш комментарий..." required></textarea>
+                                            </div>
+                                            <div class="d-flex justify-content-end">
+                                                <button type="submit" class="btn btn-outline-primary">
+                                                    <i class="fas fa-paper-plane me-2"></i>Отправить комментарий
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </c:if>
                             </div>
 
                         </c:when>

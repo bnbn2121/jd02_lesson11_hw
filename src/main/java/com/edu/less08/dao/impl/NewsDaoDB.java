@@ -14,6 +14,7 @@ import java.util.Optional;
 
 public class NewsDaoDB implements NewsDao {
     private final NewsContentStorageDao contentStorageDaoFile = DaoProvider.getInstance().getNewsContentStorageDao();
+    private Status defaultAddNewsStatus = Status.ACTIVE;
     private static final String SELECT_NEWS_PAGINATED = "SELECT n.*, u.login as publisher_login, " +
             "s.type as status_type " +
             "FROM news n " +
@@ -33,15 +34,6 @@ public class NewsDaoDB implements NewsDao {
     private static final String UPDATE_NEWS = "UPDATE news SET title = ?, brief = ?, content_path = ?, image_path = ?, publisher_id = ?, status_id = ? WHERE id = ?";
     private static final String SELECT_COUNT_NEWS = "SELECT COUNT(*) FROM news WHERE status_id = ?";
     private static final String UPDATE_NEWS_CONTENT = "UPDATE news SET content_path = ? WHERE id = ?";
-    private final int defaultStatusIdForAddedNews;
-
-    {
-        try {
-            defaultStatusIdForAddedNews = StatusUtil.getStatusIdByName(Status.ACTIVE);
-        } catch (DaoException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
     public List<News> getNewsPaginatedWithoutContent(int offset, int limit) throws DaoException {
@@ -57,19 +49,17 @@ public class NewsDaoDB implements NewsDao {
         }
     }
 
-    private List<News> executeQueryAndCreateListNews(PreparedStatement preparedStatement) throws DaoException {
+    private List<News> executeQueryAndCreateListNews(PreparedStatement preparedStatement) throws SQLException {
         try (ResultSet resultSet = preparedStatement.executeQuery()){
             List<News> newsList = new ArrayList<>();
             while (resultSet.next()) {
                 newsList.add(createNewsFromResultSetWithoutContent(resultSet));
             }
             return newsList;
-        } catch (SQLException e) {
-            throw new DaoException(e);
         }
     }
 
-    private News createNewsFromResultSetWithoutContent(ResultSet resultSet) throws SQLException, DaoException {
+    private News createNewsFromResultSetWithoutContent(ResultSet resultSet) throws SQLException {
         Date dateFromResultSet = resultSet.getDate("publish_date");
         LocalDate publishDate = (dateFromResultSet != null) ? dateFromResultSet.toLocalDate() : null;
 
@@ -131,7 +121,7 @@ public class NewsDaoDB implements NewsDao {
             LocalDate createdDate = LocalDate.now();
             preparedStatementAdd.setDate(5, Date.valueOf(createdDate));
             preparedStatementAdd.setInt(6, news.getPublisher().getId());
-            preparedStatementAdd.setInt(7, defaultStatusIdForAddedNews); //придумать что-то со статусом
+            preparedStatementAdd.setInt(7, StatusUtil.getStatusIdByName(defaultAddNewsStatus));
             preparedStatementAdd.executeUpdate();
 
             int newsId = getGeneratedId(preparedStatementAdd);
@@ -160,7 +150,7 @@ public class NewsDaoDB implements NewsDao {
             if (generatedKeys.next()) {
                 return generatedKeys.getInt(1);
             } else {
-                throw new DaoException("Creating news failed, no ID obtained.");
+                throw new DaoException("id not obtained.");
             }
         } catch (SQLException e) {
             throw new DaoException(e);

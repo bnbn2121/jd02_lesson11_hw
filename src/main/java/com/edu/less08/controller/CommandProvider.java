@@ -20,6 +20,7 @@ public class CommandProvider {
         commandsMap.put(CommandName.ADD_NEWS, new AddNews());
         commandsMap.put(CommandName.VIEW_NEWS, new ViewNews());
         commandsMap.put(CommandName.EDIT_NEWS, new EditNews());
+        commandsMap.put(CommandName.ADD_COMMENT, new AddComment());
     }
 
     private CommandProvider() {}
