@@ -17,11 +17,6 @@ public class UserDaoDB implements UserDao {
     private final static String UPDATE_USER = "UPDATE users SET login = ?, email = ?, password = ?, role_id = ?, status_id = ? WHERE id = ?";
 
     @Override
-    public List<User> getAllUsers() throws DaoException {
-        return null;
-    }
-
-    @Override
     public Optional<User> getUserById(int id) throws DaoException {
         try (Connection connection = ConnectionPoolCustom.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID)) {

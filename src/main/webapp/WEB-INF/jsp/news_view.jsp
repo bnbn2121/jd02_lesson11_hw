@@ -107,6 +107,11 @@
             margin-top: 30px;
         }
 
+        .btn-group-actions {
+            display: flex;
+            gap: 10px;
+        }
+
         @media (max-width: 991px) {
             .navbar-brand-center {
                 position: static;
@@ -116,6 +121,14 @@
             }
             .news-image {
                 height: 300px;
+            }
+            .btn-group-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            .btn-group-actions .btn {
+                width: 100%;
+                margin-bottom: 10px;
             }
         }
     </style>
@@ -191,10 +204,43 @@
                                             <c:set var="isSuperadmin" value="${sessionScope.user.role eq 'SUPERADMIN'}" />
 
                                             <c:if test="${not empty sessionScope.user && (isOwner || isModerator || isAdmin || isSuperadmin)}">
-                                                <a href="Controller?command=GO_TO_NEWS_REDACTOR_PAGE&newsId=${news.id}&currentPage=${requestScope.currentPage}" class="btn btn-outline-primary">
-                                                    <i class="fas fa-edit me-2"></i>Редактировать
-                                                </a>
+                                                <div class="btn-group-actions">
+                                                    <a href="Controller?command=GO_TO_NEWS_REDACTOR_PAGE&newsId=${news.id}&currentPage=${requestScope.currentPage}" class="btn btn-outline-primary">
+                                                        <i class="fas fa-edit me-2"></i>Редактировать
+                                                    </a>
+                                                    <!-- Кнопка удаления новости -->
+                                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteNewsModal">
+                                                        <i class="fas fa-trash me-2"></i>Удалить
+                                                    </button>
+                                                </div>
                                             </c:if>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Модальное окно подтверждения удаления -->
+                            <div class="modal fade" id="deleteNewsModal" tabindex="-1" aria-labelledby="deleteNewsModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteNewsModalLabel">Подтверждение удаления</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Вы уверены, что хотите удалить новость <strong>"${news.title}"</strong>?</p>
+                                            <p class="text-danger"><small>Это действие невозможно отменить. Все комментарии к этой новости также будут удалены.</small></p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                            <form action="Controller" method="post" style="display: inline;">
+                                                <input type="hidden" name="command" value="delete_news">
+                                                <input type="hidden" name="newsId" value="${news.id}">
+                                                <input type="hidden" name="currentPage" value="${requestScope.currentPage}">
+                                                <button type="submit" class="btn btn-danger">
+                                                    <i class="fas fa-trash me-2"></i>Удалить
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>

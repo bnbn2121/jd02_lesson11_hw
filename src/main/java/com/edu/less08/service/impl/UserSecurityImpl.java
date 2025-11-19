@@ -6,27 +6,16 @@ import com.edu.less08.dao.impl.StatusUtil;
 import com.edu.less08.model.*;
 import com.edu.less08.service.ServiceException;
 import com.edu.less08.service.UserSecurityService;
-import com.edu.less08.service.util.PasswordHasher;
+import com.edu.less08.service.util.PasswordSecurityUtil;
 import com.edu.less08.service.util.RegistrationInfoValidator;
 
 import java.util.Optional;
 
 
 public class UserSecurityImpl implements UserSecurityService {
-    private final PasswordHasher passwordHasher = new PasswordHasher();
+    private final PasswordSecurityUtil passwordSecurityUtil = new PasswordSecurityUtil();
     private final RegistrationInfoValidator registrationInfoValidator = new RegistrationInfoValidator();
     private final UserDao userDao = DaoProvider.getInstance().getUserDao();
-    private final int defaultUserRoleId;
-    private final int defaultUserStatusId;
-
-    {
-        try {
-            defaultUserRoleId = RoleUtil.getRoleIdByName(UserRole.USER);
-            defaultUserStatusId = StatusUtil.getStatusIdByName(Status.ACTIVE);
-        } catch (DaoException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 
     @Override
@@ -37,7 +26,7 @@ public class UserSecurityImpl implements UserSecurityService {
                 throw new ServiceException().setUserMessage("Login is not exist");
             }
             User user = userOptional.get();
-            if (!passwordHasher.checkPassword(password, user.getPassword())) {
+            if (!passwordSecurityUtil.checkPassword(password, user.getPassword())) {
                 throw new ServiceException().setUserMessage("Password is not correct");
             }
             UserView userView = convertToUserView(user);
@@ -47,7 +36,19 @@ public class UserSecurityImpl implements UserSecurityService {
         }
     }
 
-    private UserView convertToUserView(User user) throws ServiceException{
+    @Override
+    public boolean registrate(RegistrationInfo registrationInfo) throws ServiceException {
+        try {
+            registrationInfoValidator.validate(registrationInfo);
+            User user = createUserFromRegistrationInfo(registrationInfo);
+            userDao.addUser(user);
+            return true;
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    private UserView convertToUserView(User user) throws ServiceException {
         try {
             int userId = user.getId();
             String userLogin = user.getLogin();
@@ -61,24 +62,13 @@ public class UserSecurityImpl implements UserSecurityService {
         }
     }
 
-
-    @Override
-    public boolean registrate(RegistrationInfo registrationInfo) throws ServiceException{
-        try {
-        registrationInfoValidator.validate(registrationInfo);
-        User user = new User(
-                0,
-                registrationInfo.getLogin(),
-                registrationInfo.getEmail(),
-                passwordHasher.hashPassword(registrationInfo.getPassword()),
-                defaultUserRoleId,
-                defaultUserStatusId
-        );
-
-            userDao.addUser(user);
-            return true;
-        } catch (DaoException e) {
-            throw new ServiceException(e);
-        }
+    private User createUserFromRegistrationInfo(RegistrationInfo regInfo) throws DaoException {
+        User user = new User();
+        user.setLogin(regInfo.getLogin());
+        user.setEmail(regInfo.getEmail());
+        user.setPassword(passwordSecurityUtil.hashPassword(regInfo.getPassword()));
+        user.setRoleId(RoleUtil.getRoleIdByName(UserRole.USER));
+        user.setStatusId(StatusUtil.getStatusIdByName(Status.ACTIVE));
+        return user;
     }
 }

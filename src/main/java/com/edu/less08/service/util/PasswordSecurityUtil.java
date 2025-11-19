@@ -2,7 +2,7 @@ package com.edu.less08.service.util;
 
 import org.mindrot.jbcrypt.BCrypt;
 
-public class PasswordHasher {
+public class PasswordSecurityUtil {
     public String hashPassword(String password) {
         if (password == null) {
             throw new IllegalArgumentException();

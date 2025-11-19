@@ -28,7 +28,7 @@ public class AccessControlFilter extends HttpFilter {
         authorizedUserCommands = new ArrayList<>();
         authorizedUserCommands.add(CommandName.ADD_COMMENT);
         authorizedUserCommands.add(CommandName.EDIT_COMMENT);
-        authorizedUserCommands.add(CommandName.REMOVE_COMMENT);
+        authorizedUserCommands.add(CommandName.DELETE_COMMENT);
         authorizedUserCommands.add(CommandName.ADD_NEWS);
         authorizedUserCommands.add(CommandName.ADD_COMPLAINT);
         authorizedUserCommands.add(CommandName.GO_TO_NEWS_REDACTOR_PAGE);
@@ -36,7 +36,7 @@ public class AccessControlFilter extends HttpFilter {
         moderatorCommands = new ArrayList<>();
         moderatorCommands.add(CommandName.APPROVE_NEWS);
         moderatorCommands.add(CommandName.EDIT_NEWS);
-        moderatorCommands.add(CommandName.REMOVE_NEWS);
+        moderatorCommands.add(CommandName.DELETE_NEWS);
         moderatorCommands.add(CommandName.PROCESS_COMPLAINT);
 
         adminCommands = new ArrayList<>();
@@ -47,9 +47,7 @@ public class AccessControlFilter extends HttpFilter {
     protected void doFilter(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpSession session = req.getSession(false);
         CommandName commandName = CommandProvider.getCommandName(req.getParameter("command"));
-        System.out.println("1");
         Optional<UserView> optionalUser = getUserView(session);
-        System.out.println("2");
         if (hasAccess(commandName, optionalUser)) {
             chain.doFilter(req, res);
         } else {

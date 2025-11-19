@@ -11,7 +11,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 
 public class NewsContentStorageDaoFile implements NewsContentStorageDao {
-    private String storagePath = "C:/NewsApp/content_storage";
+    private String storagePath;
 
     public NewsContentStorageDaoFile() {
         storagePath = loadPathFromProperties();
@@ -30,8 +30,10 @@ public class NewsContentStorageDaoFile implements NewsContentStorageDao {
                 properties.load(input);
                 return properties.getProperty("news.storage.path");
             }
-        } catch (IOException e) {}
-        return"C:/NewsApp/content_storage";
+        } catch (IOException e) {
+            return "C:/NewsApp/content_storage";
+        }
+        return "C:/NewsApp/content_storage";
     }
 
     private void createDirectories() {

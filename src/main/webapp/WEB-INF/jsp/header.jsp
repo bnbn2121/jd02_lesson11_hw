@@ -1,6 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<style>
+/* Уменьшаем ширину выпадающего списка языка */
+.language-dropdown .dropdown-menu {
+    min-width: 80px !important; /* Уменьшаем минимальную ширину */
+    width: auto;
+}
+.language-dropdown .dropdown-item {
+    padding: 0.25rem 0.75rem; /* Уменьшаем отступы */
+    font-size: 0.9rem; /* Немного уменьшаем шрифт */
+    text-align: center;
+}
+</style>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <!-- Кнопка Главная слева -->
@@ -35,14 +48,14 @@
                         </a>
 
                         <!-- Выбор языка -->
-                        <div class="dropdown me-3">
+                        <div class="dropdown me-3 language-dropdown">
                             <button class="btn btn-outline-light dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown">
-                                <i class="fas fa-globe"></i> Русский
+                                <i class="fas fa-globe"></i> RU
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Русский</a></li>
-                                <li><a class="dropdown-item" href="#">English</a></li>
+                                <li><a class="dropdown-item" href="#">RU</a></li>
+                                <li><a class="dropdown-item" href="#">EN</a></li>
                             </ul>
                         </div>
 
@@ -58,14 +71,14 @@
                     <c:otherwise>
                         <!-- Блок для неавторизованного пользователя -->
                         <!-- Выбор языка -->
-                        <div class="dropdown me-3">
+                        <div class="dropdown me-3 language-dropdown">
                             <button class="btn btn-outline-light dropdown-toggle" type="button"
                                     data-bs-toggle="dropdown">
-                                <i class="fas fa-globe"></i> Русский
+                                <i class="fas fa-globe"></i> RU
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Русский</a></li>
-                                <li><a class="dropdown-item" href="#">English</a></li>
+                                <li><a class="dropdown-item" href="#">RU</a></li>
+                                <li><a class="dropdown-item" href="#">EN</a></li>
                             </ul>
                         </div>
 

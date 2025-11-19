@@ -11,4 +11,5 @@ public interface NewsService {
     int getAllActiveNewsCount() throws ServiceException;
     News getNewsById(int id) throws ServiceException;
     News updateNews(int newsId, String newTitle, String newBrief, String newContent, String newImagePath, Status status) throws ServiceException;
+    boolean deleteNewsById(int newsId) throws ServiceException;
 }

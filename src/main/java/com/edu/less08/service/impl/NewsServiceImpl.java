@@ -85,4 +85,14 @@ public class NewsServiceImpl implements NewsService {
             throw new ServiceException(e);
         }
     }
+
+    @Override
+    public boolean deleteNewsById(int newsId) throws ServiceException {
+        try {
+            newsDao.deleteNewsById(newsId);
+            return true;
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+    }
 }

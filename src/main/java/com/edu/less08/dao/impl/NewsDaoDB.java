@@ -38,7 +38,7 @@ public class NewsDaoDB implements NewsDao {
     @Override
     public List<News> getNewsPaginatedWithoutContent(int offset, int limit) throws DaoException {
         try (Connection connection = ConnectionPoolCustom.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_NEWS_PAGINATED)){
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_NEWS_PAGINATED)) {
             preparedStatement.setString(1, Status.ACTIVE.name().toLowerCase());
             preparedStatement.setInt(2, limit);
             preparedStatement.setInt(3, offset);
@@ -50,7 +50,7 @@ public class NewsDaoDB implements NewsDao {
     }
 
     private List<News> executeQueryAndCreateListNews(PreparedStatement preparedStatement) throws SQLException {
-        try (ResultSet resultSet = preparedStatement.executeQuery()){
+        try (ResultSet resultSet = preparedStatement.executeQuery()) {
             List<News> newsList = new ArrayList<>();
             while (resultSet.next()) {
                 newsList.add(createNewsFromResultSetWithoutContent(resultSet));
@@ -80,16 +80,11 @@ public class NewsDaoDB implements NewsDao {
     }
 
     @Override
-    public List<News> getAllNews() throws DaoException {
-        return null;
-    }
-
-    @Override
     public Optional<News> getNewsById(int idNews) throws DaoException {
         try (Connection connection = ConnectionPoolCustom.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_NEWS_BY_ID)){
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_NEWS_BY_ID)) {
             preparedStatement.setInt(1, idNews);
-            try(ResultSet resultSet = preparedStatement.executeQuery()) {
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     News news = createNewsFromResultSetWithoutContent(resultSet);
                     loadContent(news);
@@ -102,7 +97,7 @@ public class NewsDaoDB implements NewsDao {
         }
     }
 
-    private void loadContent(News news) throws DaoException{
+    private void loadContent(News news) throws DaoException {
         String content = contentStorageDaoFile.getContentById(news.getId());
         news.setContent(content);
     }
@@ -114,30 +109,35 @@ public class NewsDaoDB implements NewsDao {
 
             try (PreparedStatement preparedStatementAdd = connection.prepareStatement(INSERT_NEWS, PreparedStatement.RETURN_GENERATED_KEYS);
                  PreparedStatement preparedStatementUpdateContent = connection.prepareStatement(UPDATE_NEWS_CONTENT)) {
-            preparedStatementAdd.setString(1, news.getTitle());
-            preparedStatementAdd.setString(2, news.getBrief());
-            preparedStatementAdd.setString(3, "");
-            preparedStatementAdd.setString(4, news.getImagePath());
-            LocalDate createdDate = LocalDate.now();
-            preparedStatementAdd.setDate(5, Date.valueOf(createdDate));
-            preparedStatementAdd.setInt(6, news.getPublisher().getId());
-            preparedStatementAdd.setInt(7, StatusUtil.getStatusIdByName(defaultAddNewsStatus));
-            preparedStatementAdd.executeUpdate();
 
-            int newsId = getGeneratedId(preparedStatementAdd);
-            String contentPath = contentStorageDaoFile.addContent(newsId, content);
-            preparedStatementUpdateContent.setString(1, contentPath);
-            preparedStatementUpdateContent.setInt(2, newsId);
-            preparedStatementUpdateContent.executeUpdate();
-            connection.commit();
+                preparedStatementAdd.setString(1, news.getTitle());
+                preparedStatementAdd.setString(2, news.getBrief());
+                preparedStatementAdd.setString(3, "");
+                preparedStatementAdd.setString(4, news.getImagePath());
+                LocalDate createdDate = LocalDate.now();
+                preparedStatementAdd.setDate(5, Date.valueOf(createdDate));
+                preparedStatementAdd.setInt(6, news.getPublisher().getId());
+                preparedStatementAdd.setInt(7, StatusUtil.getStatusIdByName(defaultAddNewsStatus));
+                preparedStatementAdd.executeUpdate();
 
-            news.setContent(contentPath);
-            news.setId(newsId);
-            news.setStatus(Status.ACTIVE);
-            news.setPublishDate(createdDate);
-            return news;
-            } catch (Exception e) {
+                int newsId = getGeneratedId(preparedStatementAdd);
+                String contentPath = contentStorageDaoFile.addContent(newsId, content);
+
+                preparedStatementUpdateContent.setString(1, contentPath);
+                preparedStatementUpdateContent.setInt(2, newsId);
+                preparedStatementUpdateContent.executeUpdate();
+
+                connection.commit();
+                connection.setAutoCommit(true);
+
+                news.setContent(contentPath);
+                news.setId(newsId);
+                news.setStatus(Status.ACTIVE);
+                news.setPublishDate(createdDate);
+                return news;
+            } catch (SQLException e) {
                 connection.rollback();
+                connection.setAutoCommit(true);
                 throw e;
             }
         } catch (SQLException e) {
@@ -145,12 +145,34 @@ public class NewsDaoDB implements NewsDao {
         }
     }
 
-    private int getGeneratedId(PreparedStatement preparedStatement) throws DaoException {
+    private int getGeneratedId(PreparedStatement preparedStatement) throws SQLException {
         try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
             if (generatedKeys.next()) {
                 return generatedKeys.getInt(1);
             } else {
-                throw new DaoException("id not obtained.");
+                throw new SQLException("id not obtained");
+            }
+        }
+    }
+
+    @Override
+    public void deleteNewsById(int idNews) throws DaoException {
+        try (Connection connection = ConnectionPoolCustom.getInstance().getConnection()) {
+            connection.setAutoCommit(false);
+            String contentBackup = contentStorageDaoFile.getContentById(idNews);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_NEWS_BY_ID)) {
+                preparedStatement.setInt(1, idNews);
+                preparedStatement.executeUpdate();
+
+                contentStorageDaoFile.deleteContentById(idNews);
+
+                connection.commit();
+                connection.setAutoCommit(true);
+            } catch (SQLException | DaoException e) {
+                connection.rollback();
+                connection.setAutoCommit(true);
+                contentStorageDaoFile.addContent(idNews, contentBackup);
+                throw e;
             }
         } catch (SQLException e) {
             throw new DaoException(e);
@@ -158,37 +180,38 @@ public class NewsDaoDB implements NewsDao {
     }
 
     @Override
-    public void deleteNewsById(int idNews) throws DaoException {
-        try (Connection connection = ConnectionPoolCustom.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_NEWS_BY_ID)) {
-            preparedStatement.setInt(1, idNews);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new DaoException(e);
-        }
-    }
-
-    @Override
     public void updateNews(News news) throws DaoException {
-        try (Connection connection = ConnectionPoolCustom.getInstance().getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_NEWS)) {
-            preparedStatement.setString(1, news.getTitle());
-            preparedStatement.setString(2, news.getBrief());
-            String content = news.getContent();
-            String contentPath = contentStorageDaoFile.updateContentById(news.getId(), content);
-            preparedStatement.setString(3, contentPath);
-            preparedStatement.setString(4, news.getImagePath());
-            preparedStatement.setInt(5, news.getPublisher().getId());
-            preparedStatement.setInt(6, StatusUtil.getStatusIdByName(news.getStatus()));
-            preparedStatement.setInt(7, news.getId());
-            preparedStatement.executeUpdate();
+        try (Connection connection = ConnectionPoolCustom.getInstance().getConnection()) {
+            connection.setAutoCommit(false);
+            String contentBackup = contentStorageDaoFile.getContentById(news.getId());
+            try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_NEWS)) {
+                String content = news.getContent();
+                String contentPath = contentStorageDaoFile.updateContentById(news.getId(), content);
+
+                preparedStatement.setString(1, news.getTitle());
+                preparedStatement.setString(2, news.getBrief());
+                preparedStatement.setString(3, contentPath);
+                preparedStatement.setString(4, news.getImagePath());
+                preparedStatement.setInt(5, news.getPublisher().getId());
+                preparedStatement.setInt(6, StatusUtil.getStatusIdByName(news.getStatus()));
+                preparedStatement.setInt(7, news.getId());
+                preparedStatement.executeUpdate();
+
+                connection.commit();
+                connection.setAutoCommit(true);
+            } catch (SQLException | DaoException e) {
+                connection.rollback();
+                connection.setAutoCommit(true);
+                contentStorageDaoFile.updateContentById(news.getId(), contentBackup);
+                throw e;
+            }
         } catch (SQLException e) {
             throw new DaoException(e);
         }
     }
 
     @Override
-    public int getCountNewsByStatus(Status ... status) throws DaoException {
+    public int getCountNewsByStatus(Status... status) throws DaoException {
         try (Connection connection = ConnectionPoolCustom.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_COUNT_NEWS)) {
             int countNews = 0;
@@ -196,7 +219,7 @@ public class NewsDaoDB implements NewsDao {
                 int statusId = StatusUtil.getStatusIdByName(oneStatus);
                 preparedStatement.setInt(1, statusId);
                 ResultSet resultSet = preparedStatement.executeQuery();
-                if(resultSet.next()) {
+                if (resultSet.next()) {
                     countNews += resultSet.getInt(1);
                 }
             }
