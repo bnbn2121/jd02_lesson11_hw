@@ -191,7 +191,7 @@ public class DB_creator {
                         "  PRIMARY KEY (`id`),\n" +
                         "  KEY `comments_news_news_FK` (`news_id`),\n" +
                         "  CONSTRAINT `comments_news_comments_FK` FOREIGN KEY (`id`) REFERENCES `comments` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,\n" +
-                        "  CONSTRAINT `comments_news_news_FK` FOREIGN KEY (`news_id`) REFERENCES `news` (`id`)\n" +
+                        "  CONSTRAINT `comments_news_news_FK` FOREIGN KEY (`news_id`) REFERENCES `news` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT\n" +
                         ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;"
         );
     }

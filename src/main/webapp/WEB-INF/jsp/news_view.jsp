@@ -69,28 +69,74 @@
             padding: 15px;
             margin-bottom: 15px;
             background-color: #f8f9fa;
+            position: relative;
         }
 
         .comment-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 10px;
+            gap: 15px;
         }
 
         .comment-author {
             font-weight: bold;
             color: #495057;
+            flex-shrink: 0;
         }
 
         .comment-date {
             color: #6c757d;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            white-space: nowrap;
         }
 
         .comment-text {
             color: #212529;
             line-height: 1.5;
+            margin-top: 10px;
+        }
+
+        .comment-actions {
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+
+        .comment-date-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            background-color: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .btn-delete-comment {
+            width: 20px;
+            height: 20px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: transparent;
+            color: #6c757d;
+            border-radius: 3px;
+            font-size: 0.6rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-delete-comment:hover {
+            background-color: #dc3545;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .btn-delete-comment:hover {
+            background-color: #dc3545;
+            color: white;
         }
 
         .no-comments {
@@ -129,6 +175,34 @@
             .btn-group-actions .btn {
                 width: 100%;
                 margin-bottom: 10px;
+            }
+            .comment-header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .comment-date {
+                text-align: left;
+                order: 3;
+                width: 100%;
+            }
+            .comment-actions {
+                margin-left: 0;
+            }
+            .btn-delete-comment {
+                width: 26px;
+                height: 26px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .comment-header {
+                align-items: center;
+            }
+            .comment-author {
+                font-size: 0.9rem;
+            }
+            .comment-date {
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -265,9 +339,29 @@
                                                         <span class="comment-author">
                                                             <i class="fas fa-user me-1"></i>${comment.author.login}
                                                         </span>
-                                                        <span class="comment-date">
-                                                            <i class="fas fa-calendar me-1"></i>${comment.publishDate}
-                                                        </span>
+
+                                                        <div class="comment-date-wrapper">
+                                                            <span class="comment-date">
+                                                                <i class="fas fa-calendar me-1"></i>${comment.publishDate}
+                                                            </span>
+
+                                                            <!-- Кнопка удаления комментария -->
+                                                            <c:if test="${not empty sessionScope.user}">
+                                                                <c:set var="isCommentOwner" value="${sessionScope.user.id eq comment.author.id}" />
+                                                                <c:set var="canDeleteComment" value="${isCommentOwner || isModerator || isAdmin || isSuperadmin}" />
+
+                                                                <c:if test="${canDeleteComment}">
+                                                                    <div class="comment-actions">
+                                                                        <button type="button" class="btn btn-delete-comment"
+                                                                                data-bs-toggle="modal" data-bs-target="#deleteCommentModal"
+                                                                                data-comment-id="${comment.id}" data-comment-author="${comment.author.login}"
+                                                                                title="Удалить комментарий">
+                                                                            <i class="fas fa-times"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </c:if>
+                                                            </c:if>
+                                                        </div>
                                                     </div>
                                                     <div class="comment-text">
                                                         ${comment.text}
@@ -323,6 +417,34 @@
         </div>
     </main>
 
+    <!-- Модальное окно подтверждения удаления комментария -->
+    <div class="modal fade" id="deleteCommentModal" tabindex="-1" aria-labelledby="deleteCommentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteCommentModalLabel">Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить комментарий пользователя <strong id="commentAuthorName"></strong>?</p>
+                    <p class="text-danger"><small>Это действие невозможно отменить.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <form id="deleteCommentForm" action="Controller" method="post" style="display: inline;">
+                        <input type="hidden" name="command" value="delete_comment">
+                        <input type="hidden" name="commentId" id="commentId">
+                        <input type="hidden" name="newsId" value="${news.id}">
+                        <input type="hidden" name="currentPage" value="${requestScope.currentPage}">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash me-2"></i>Удалить
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <jsp:include page="footer.jsp"/>
 
     <!-- Bootstrap JS -->
@@ -347,6 +469,19 @@
                     if (!p.classList.contains('alert')) {
                         p.classList.add('mb-3');
                     }
+                });
+            }
+
+            // Обработка модального окна удаления комментария
+            const deleteCommentModal = document.getElementById('deleteCommentModal');
+            if (deleteCommentModal) {
+                deleteCommentModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const commentId = button.getAttribute('data-comment-id');
+                    const commentAuthor = button.getAttribute('data-comment-author');
+
+                    document.getElementById('commentAuthorName').textContent = commentAuthor;
+                    document.getElementById('commentId').value = commentId;
                 });
             }
         });
