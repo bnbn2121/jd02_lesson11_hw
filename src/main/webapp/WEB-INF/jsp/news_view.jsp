@@ -12,7 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .news-card {
-            transition: transform 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid #dee2e6;
             margin-bottom: 30px;
         }
         .news-image {
@@ -20,102 +21,79 @@
             object-fit: cover;
             width: 100%;
         }
-        .language-selector {
-            cursor: pointer;
-        }
-        footer {
-            margin-top: 50px;
-        }
         .news-content {
-            padding: 30px;
+            padding: 2rem;
         }
-        .navbar-brand-center {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
         .news-meta {
             background-color: #f8f9fa;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 20px;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #0d6efd;
         }
-
         .news-full-content {
-            line-height: 1.8;
+            line-height: 1.7;
             font-size: 1.1rem;
+            color: #333;
         }
-
         .news-full-content p {
             margin-bottom: 1.5rem;
         }
-
+        .news-full-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
         .action-buttons {
-            border-top: 1px solid #dee2e6;
-            padding-top: 20px;
-            margin-top: 30px;
+            border-top: 1px solid #e9ecef;
+            padding-top: 1.5rem;
+            margin-top: 2rem;
         }
-
         .comments-section {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #dee2e6;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e9ecef;
         }
-
         .comment-card {
             border: 1px solid #e9ecef;
             border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            background-color: #f8f9fa;
-            position: relative;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            background-color: #fff;
+            transition: box-shadow 0.2s ease;
         }
-
+        .comment-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
         .comment-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 10px;
-            gap: 15px;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
-
         .comment-author {
-            font-weight: bold;
+            font-weight: 600;
             color: #495057;
-            flex-shrink: 0;
+            font-size: 0.95rem;
         }
-
         .comment-date {
             color: #6c757d;
             font-size: 0.85rem;
-            white-space: nowrap;
+            background-color: #f8f9fa;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
         }
-
-        .comment-text {
-            color: #212529;
-            line-height: 1.5;
-            margin-top: 10px;
-        }
-
         .comment-actions {
-            flex-shrink: 0;
-            margin-left: auto;
-        }
-
-        .comment-date-wrapper {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-            background-color: #e9ecef;
-            padding: 4px 8px;
-            border-radius: 6px;
+            gap: 0.5rem;
         }
-
-        .btn-delete-comment {
-            width: 20px;
-            height: 20px;
+        .btn-comment-action {
+            width: 28px;
+            height: 28px;
             padding: 0;
             display: flex;
             align-items: center;
@@ -123,86 +101,101 @@
             border: none;
             background: transparent;
             color: #6c757d;
-            border-radius: 3px;
-            font-size: 0.6rem;
-            transition: all 0.3s ease;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
         }
-
+        .btn-edit-comment:hover {
+            background-color: #0d6efd;
+            color: white;
+        }
         .btn-delete-comment:hover {
             background-color: #dc3545;
             color: white;
-            transform: scale(1.05);
         }
-
-        .btn-delete-comment:hover {
-            background-color: #dc3545;
-            color: white;
+        .comment-text {
+            color: #495057;
+            line-height: 1.5;
+            white-space: pre-line;
         }
-
+        .comment-edit-mode {
+            display: none;
+        }
+        .comment-edit-textarea {
+            margin-bottom: 0.75rem;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .comment-edit-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
         .no-comments {
             text-align: center;
             color: #6c757d;
             font-style: italic;
-            padding: 30px;
+            padding: 2rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
         }
-
         .add-comment-section {
             background-color: #f8f9fa;
             border-radius: 8px;
-            padding: 20px;
-            margin-top: 30px;
+            padding: 1.5rem;
+            margin-top: 2rem;
         }
-
         .btn-group-actions {
             display: flex;
-            gap: 10px;
+            gap: 0.5rem;
+        }
+        .breadcrumb {
+            background-color: #f8f9fa;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
         }
 
-        @media (max-width: 991px) {
-            .navbar-brand-center {
-                position: static;
-                transform: none;
-                text-align: center;
-                margin: 0 auto;
-            }
+        /* Адаптивность */
+        @media (max-width: 768px) {
             .news-image {
                 height: 300px;
+            }
+            .news-content {
+                padding: 1.5rem;
             }
             .btn-group-actions {
                 flex-direction: column;
                 width: 100%;
+                margin-top: 1rem;
             }
             .btn-group-actions .btn {
                 width: 100%;
-                margin-bottom: 10px;
+                margin-bottom: 0.5rem;
+            }
+            .action-buttons .d-flex {
+                flex-direction: column;
             }
             .comment-header {
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-            .comment-date {
-                text-align: left;
-                order: 3;
-                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
             }
             .comment-actions {
-                margin-left: 0;
-            }
-            .btn-delete-comment {
-                width: 26px;
-                height: 26px;
+                align-self: flex-end;
             }
         }
 
         @media (max-width: 576px) {
-            .comment-header {
-                align-items: center;
+            .news-image {
+                height: 250px;
             }
-            .comment-author {
-                font-size: 0.9rem;
+            .news-content {
+                padding: 1rem;
             }
-            .comment-date {
-                font-size: 0.8rem;
+            .comment-card {
+                padding: 1rem;
+            }
+            .add-comment-section {
+                padding: 1rem;
             }
         }
     </style>
@@ -267,17 +260,16 @@
 
                                     <!-- Кнопки действий -->
                                     <div class="action-buttons">
-                                        <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                                             <a href="Controller?command=go_to_main_page&currentPage=${requestScope.currentPage}" class="btn btn-outline-secondary">
                                                 <i class="fas fa-arrow-left me-2"></i>Назад к списку новостей
                                             </a>
 
-                                            <c:set var="isOwner" value="${sessionScope.user.id eq news.publisher.id}" />
+                                            <c:set var="isNewsOwner" value="${sessionScope.user.id eq news.publisher.id}" />
                                             <c:set var="isModerator" value="${sessionScope.user.role eq 'MODERATOR'}" />
                                             <c:set var="isAdmin" value="${sessionScope.user.role eq 'ADMIN'}" />
                                             <c:set var="isSuperadmin" value="${sessionScope.user.role eq 'SUPERADMIN'}" />
-
-                                            <c:if test="${not empty sessionScope.user && (isOwner || isModerator || isAdmin || isSuperadmin)}">
+                                            <c:if test="${not empty sessionScope.user && (isNewsOwner || isModerator || isAdmin || isSuperadmin)}">
                                                 <div class="btn-group-actions">
                                                     <a href="Controller?command=GO_TO_NEWS_REDACTOR_PAGE&newsId=${news.id}&currentPage=${requestScope.currentPage}" class="btn btn-outline-primary">
                                                         <i class="fas fa-edit me-2"></i>Редактировать
@@ -325,7 +317,7 @@
                                 <h4 class="mb-4">
                                     <i class="fas fa-comments me-2"></i>Комментарии
                                     <c:if test="${not empty requestScope.comments}">
-                                        <span class="badge border border-secondary text-secondary small ms-2">${requestScope.comments.size()}</span>
+                                        <span class="badge bg-secondary ms-2">${requestScope.comments.size()}</span>
                                     </c:if>
                                 </h4>
 
@@ -334,37 +326,69 @@
                                     <c:when test="${not empty requestScope.comments}">
                                         <div class="comments-list">
                                             <c:forEach var="comment" items="${requestScope.comments}">
-                                                <div class="comment-card">
+                                                <div class="comment-card" id="comment-${comment.id}">
                                                     <div class="comment-header">
                                                         <span class="comment-author">
                                                             <i class="fas fa-user me-1"></i>${comment.author.login}
                                                         </span>
 
-                                                        <div class="comment-date-wrapper">
+                                                        <div style="display: flex; align-items: center; gap: 10px;">
                                                             <span class="comment-date">
                                                                 <i class="fas fa-calendar me-1"></i>${comment.publishDate}
                                                             </span>
 
-                                                            <!-- Кнопка удаления комментария -->
+                                                            <!-- Кнопки действий с комментарием -->
                                                             <c:if test="${not empty sessionScope.user}">
                                                                 <c:set var="isCommentOwner" value="${sessionScope.user.id eq comment.author.id}" />
-                                                                <c:set var="canDeleteComment" value="${isCommentOwner || isModerator || isAdmin || isSuperadmin}" />
-
-                                                                <c:if test="${canDeleteComment}">
-                                                                    <div class="comment-actions">
-                                                                        <button type="button" class="btn btn-delete-comment"
+                                                                <div class="comment-actions">
+                                                                    <c:if test="${isCommentOwner}">
+                                                                        <button type="button" class="btn btn-comment-action btn-edit-comment"
+                                                                                onclick="toggleCommentEdit(${comment.id})"
+                                                                                title="Редактировать комментарий">
+                                                                            <i class="fas fa-edit"></i>
+                                                                        </button>
+                                                                    </c:if>
+                                                                    <c:if test="${isCommentOwner || isModerator || isAdmin || isSuperadmin}">
+                                                                        <button type="button" class="btn btn-comment-action btn-delete-comment"
                                                                                 data-bs-toggle="modal" data-bs-target="#deleteCommentModal"
                                                                                 data-comment-id="${comment.id}" data-comment-author="${comment.author.login}"
                                                                                 title="Удалить комментарий">
                                                                             <i class="fas fa-times"></i>
                                                                         </button>
-                                                                    </div>
-                                                                </c:if>
+                                                                    </c:if>
+                                                                </div>
                                                             </c:if>
                                                         </div>
                                                     </div>
-                                                    <div class="comment-text">
-                                                        ${comment.text}
+
+                                                    <!-- Режим просмотра комментария -->
+                                                    <div class="comment-view-mode" id="comment-view-${comment.id}">
+                                                        <div class="comment-text">
+                                                            ${comment.text}
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Режим редактирования комментария -->
+                                                    <div class="comment-edit-mode" id="comment-edit-${comment.id}">
+                                                        <form action="Controller" method="post" class="comment-edit-form">
+                                                            <input type="hidden" name="command" value="update_comment">
+                                                            <input type="hidden" name="commentId" value="${comment.id}">
+                                                            <input type="hidden" name="newsId" value="${news.id}">
+                                                            <input type="hidden" name="currentPage" value="${requestScope.currentPage}">
+
+                                                            <textarea class="form-control comment-edit-textarea"
+                                                                      name="commentText"
+                                                                      rows="3">${comment.text}</textarea>
+                                                            <div class="comment-edit-actions">
+                                                                <button type="button" class="btn btn-sm btn-secondary"
+                                                                        onclick="toggleCommentEdit(${comment.id})">
+                                                                    Отмена
+                                                                </button>
+                                                                <button type="submit" class="btn btn-sm btn-primary">
+                                                                    Сохранить
+                                                                </button>
+                                                            </div>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </c:forEach>
@@ -389,10 +413,11 @@
 
                                             <div class="mb-3">
                                                 <textarea class="form-control" name="commentText" rows="4"
-                                                          placeholder="Введите ваш комментарий..." required></textarea>
+                                                          placeholder="Введите ваш комментарий..."
+                                                          required></textarea>
                                             </div>
                                             <div class="d-flex justify-content-end">
-                                                <button type="submit" class="btn btn-outline-primary">
+                                                <button type="submit" class="btn btn-primary">
                                                     <i class="fas fa-paper-plane me-2"></i>Отправить комментарий
                                                 </button>
                                             </div>
@@ -451,24 +476,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Автоматическое форматирование изображений в контенте
         document.addEventListener('DOMContentLoaded', function() {
+            // Автоматическое форматирование изображений в контенте
             const content = document.querySelector('.news-full-content');
             if (content) {
-                // Находим все изображения в контенте и добавляем классы
                 const images = content.querySelectorAll('img');
                 images.forEach(img => {
-                    img.classList.add('img-fluid', 'rounded', 'mb-3');
+                    img.classList.add('img-fluid', 'rounded');
                     img.style.maxWidth = '100%';
                     img.style.height = 'auto';
-                });
-
-                // Добавляем классы к параграфам для лучшей читаемости
-                const paragraphs = content.querySelectorAll('p');
-                paragraphs.forEach(p => {
-                    if (!p.classList.contains('alert')) {
-                        p.classList.add('mb-3');
-                    }
                 });
             }
 
@@ -485,6 +501,24 @@
                 });
             }
         });
+
+        // Функция переключения между режимами просмотра и редактирования комментария
+        function toggleCommentEdit(commentId) {
+            const viewMode = document.getElementById('comment-view-' + commentId);
+            const editMode = document.getElementById('comment-edit-' + commentId);
+
+            if (viewMode.style.display !== 'none') {
+                viewMode.style.display = 'none';
+                editMode.style.display = 'block';
+
+                const textarea = editMode.querySelector('textarea');
+                textarea.focus();
+                textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+            } else {
+                viewMode.style.display = 'block';
+                editMode.style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html>
